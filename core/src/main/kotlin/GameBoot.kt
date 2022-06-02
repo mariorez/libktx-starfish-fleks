@@ -1,8 +1,10 @@
+import Action.Type.END
+import Action.Type.START
 import com.badlogic.gdx.Application.LOG_DEBUG
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.Texture.TextureFilter.Linear
+import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import ktx.app.KtxGame
@@ -10,8 +12,6 @@ import ktx.app.KtxInputAdapter
 import ktx.app.KtxScreen
 import ktx.assets.async.AssetStorage
 import ktx.async.KtxAsync
-import Action.Type.END
-import Action.Type.START
 import screen.GameScreen
 
 class GameBoot : KtxGame<KtxScreen>() {
@@ -45,7 +45,9 @@ class GameBoot : KtxGame<KtxScreen>() {
         val assets = AssetStorage().apply {
             setLoader<TiledMap> { TmxMapLoader(fileResolver) }
             loadSync<TiledMap>("map.tmx")
-            loadSync<Texture>("turtle.png").setFilter(Linear, Linear)
+            loadSync<TextureAtlas>("starfish-collector.atlas").apply {
+                textures.forEach { it.setFilter(Linear, Linear) }
+            }
         }
 
         addScreen(GameScreen(assets))

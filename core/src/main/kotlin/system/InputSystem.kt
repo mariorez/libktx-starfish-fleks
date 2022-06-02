@@ -1,10 +1,13 @@
 package system
 
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode.LOOP
+import com.badlogic.gdx.graphics.g2d.Animation.PlayMode.NORMAL
 import com.badlogic.gdx.math.Vector2
 import com.github.quillraven.fleks.AllOf
 import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.IteratingSystem
+import component.AnimationComponent
 import component.InputComponent
 import component.PlayerComponent
 import component.TransformComponent
@@ -12,7 +15,8 @@ import component.TransformComponent
 @AllOf([PlayerComponent::class])
 class InputSystem(
     private val input: ComponentMapper<InputComponent>,
-    private val transform: ComponentMapper<TransformComponent>
+    private val transform: ComponentMapper<TransformComponent>,
+    private val animation: ComponentMapper<AnimationComponent>
 ) : IteratingSystem() {
 
     private val speedUp = Vector2()
@@ -28,6 +32,9 @@ class InputSystem(
                         if (playerInput.down) accelerator.add(speed.setAngleDeg(270f))
                     }
                 }
+                animation[entity].playMode = LOOP
+            } else {
+                animation[entity].playMode = NORMAL
             }
         }
     }

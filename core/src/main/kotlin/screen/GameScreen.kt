@@ -6,19 +6,20 @@ import GameBoot.Companion.WINDOW_HEIGHT
 import GameBoot.Companion.WINDOW_WIDTH
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.OrthographicCamera
-import com.badlogic.gdx.graphics.Texture
-import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.renderers.OrthoCachedTiledMapRenderer
 import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.World
+import component.AnimationComponent
 import component.InputComponent
 import component.PlayerComponent
 import component.RenderComponent
 import component.TransformComponent
 import ktx.assets.async.AssetStorage
 import ktx.assets.disposeSafely
+import system.AnimationSystem
 import system.InputSystem
 import system.MovementSystem
 import system.RenderSystem
@@ -28,7 +29,7 @@ class GameScreen(
     private val assets: AssetStorage
 ) : BaseScreen() {
     private val batch = SpriteBatch()
-    private val mainCamera = OrthographicCamera(
+    private val camera = OrthographicCamera(
         WINDOW_WIDTH.toFloat(),
         WINDOW_HEIGHT.toFloat()
     ).apply { setToOrtho(false) }
@@ -36,10 +37,11 @@ class GameScreen(
     private val mapRenderer = OrthoCachedTiledMapRenderer(tiledMap).apply { setBlending(true) }
     private val world = World {
         inject(batch)
-        inject(mainCamera)
+        inject(camera)
         inject(mapRenderer)
         system<InputSystem>()
         system<MovementSystem>()
+        system<AnimationSystem>()
         system<RenderSystem>()
     }
     private var turtle: Entity by Delegates.notNull()
@@ -57,13 +59,20 @@ class GameScreen(
         turtle = world.entity {
             add<PlayerComponent>()
             add<InputComponent>()
+            add<RenderComponent>()
             add<TransformComponent> {
                 position.set(100f, 100f)
                 acceleration = 400f
                 deceleration = 250f
                 maxSpeed = 150f
             }
-            add<RenderComponent> { sprite = Sprite(assets.get<Texture>("turtle.png")) }
+            add<AnimationComponent> {
+                region = assets
+                    .get<TextureAtlas>("starfish-collector.atlas")
+                    .findRegion("turtle")
+                frames = 6
+                frameDuration = 0.1f
+            }
         }
     }
 
@@ -85,5 +94,6 @@ class GameScreen(
     override fun dispose() {
         world.dispose()
         batch.disposeSafely()
+        assets.disposeSafely()
     }
 }
