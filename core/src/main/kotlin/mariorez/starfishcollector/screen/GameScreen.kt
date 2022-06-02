@@ -1,31 +1,52 @@
 package mariorez.starfishcollector.screen
 
+import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.github.quillraven.fleks.World
 import ktx.app.KtxScreen
-import ktx.app.clearScreen
+import ktx.assets.async.AssetStorage
 import ktx.assets.disposeSafely
-import ktx.assets.toInternalFile
-import ktx.graphics.use
+import mariorez.starfishcollector.GameBoot.Companion.WINDOW_HEIGHT
+import mariorez.starfishcollector.GameBoot.Companion.WINDOW_WIDTH
+import mariorez.starfishcollector.RenderSystem
+import mariorez.starfishcollector.component.RenderComponent
+import mariorez.starfishcollector.component.TransformComponent
 
-class GameScreen : KtxScreen {
-    private val image = Texture("logo.png".toInternalFile(), true).apply {
-        setFilter(
-            Texture.TextureFilter.Linear,
-            Texture.TextureFilter.Linear
-        )
-    }
+class GameScreen(
+    private val assets: AssetStorage
+) : KtxScreen {
     private val batch = SpriteBatch()
+    private val mainCamera = OrthographicCamera(
+        WINDOW_WIDTH.toFloat(),
+        WINDOW_HEIGHT.toFloat()
+    ).apply {
+        setToOrtho(false)
+    }
+    private val world = World {
+        inject(batch)
+        inject(mainCamera)
+        system<RenderSystem>()
+    }
 
-    override fun render(delta: Float) {
-        clearScreen(red = 0.7f, green = 0.7f, blue = 0.7f)
-        batch.use {
-            it.draw(image, 100f, 160f)
+    init {
+        spawnPlayer()
+    }
+
+    private fun spawnPlayer() {
+        world.entity {
+            add<TransformComponent> { position.set(100f, 100f) }
+            add<RenderComponent> { sprite = Sprite(assets.get<Texture>("turtle.png")) }
         }
     }
 
+    override fun render(delta: Float) {
+        world.update(delta)
+    }
+
     override fun dispose() {
-        image.disposeSafely()
+        world.dispose()
         batch.disposeSafely()
     }
 }
