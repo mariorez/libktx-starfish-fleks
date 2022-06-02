@@ -4,6 +4,7 @@ import Action
 import BaseScreen
 import GameBoot.Companion.WINDOW_HEIGHT
 import GameBoot.Companion.WINDOW_WIDTH
+import WorldSize
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -19,6 +20,8 @@ import component.RenderComponent
 import component.TransformComponent
 import ktx.assets.async.AssetStorage
 import ktx.assets.disposeSafely
+import ktx.tiled.totalHeight
+import ktx.tiled.totalWidth
 import system.AnimationSystem
 import system.InputSystem
 import system.MovementSystem
@@ -35,10 +38,12 @@ class GameScreen(
     ).apply { setToOrtho(false) }
     private val tiledMap = assets.get<TiledMap>("map.tmx")
     private val mapRenderer = OrthoCachedTiledMapRenderer(tiledMap).apply { setBlending(true) }
+    private val worldSize = WorldSize(tiledMap.totalWidth(), tiledMap.totalHeight())
     private val world = World {
         inject(batch)
         inject(camera)
         inject(mapRenderer)
+        inject(worldSize)
         system<InputSystem>()
         system<MovementSystem>()
         system<AnimationSystem>()

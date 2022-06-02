@@ -1,16 +1,21 @@
 package system
 
+import WorldSize
 import com.badlogic.gdx.math.MathUtils
+import com.badlogic.gdx.math.Vector2
 import com.github.quillraven.fleks.AllOf
 import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.IteratingSystem
 import component.PlayerComponent
+import component.RenderComponent
 import component.TransformComponent
 
 @AllOf([PlayerComponent::class])
 class MovementSystem(
-    private val transform: ComponentMapper<TransformComponent>
+    private val worldSize: WorldSize,
+    private val transform: ComponentMapper<TransformComponent>,
+    private val render: ComponentMapper<RenderComponent>
 ) : IteratingSystem() {
 
     override fun onTickEntity(entity: Entity) {
@@ -41,6 +46,7 @@ class MovementSystem(
             // move by
             if (velocity.x != 0f || velocity.y != 0f) {
                 position.add(velocity.x * deltaTime, velocity.y * deltaTime)
+                boundToWorld(position, render[entity].sprite.width, render[entity].sprite.height)
             }
 
             // set rotation when moving
@@ -51,5 +57,12 @@ class MovementSystem(
             // reset acceleration
             accelerator.set(0f, 0f)
         }
+    }
+
+    private fun boundToWorld(position: Vector2, entityWidth: Float, entityHeight: Float) {
+        if (position.x < 0f) position.x = 0f
+        if (position.x + entityWidth > worldSize.width) position.x = worldSize.width - entityWidth
+        if (position.y < 0f) position.y = 0f
+        if (position.y + entityHeight > worldSize.height) position.y = worldSize.height - entityHeight
     }
 }
