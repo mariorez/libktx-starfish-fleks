@@ -1,4 +1,4 @@
-package mariorez.starfishcollector.component
+package component
 
 import com.badlogic.gdx.graphics.g2d.Sprite
 

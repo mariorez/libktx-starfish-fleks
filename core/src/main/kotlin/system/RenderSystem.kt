@@ -1,4 +1,4 @@
-package mariorez.starfishcollector.system
+package system
 
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
@@ -7,8 +7,8 @@ import com.github.quillraven.fleks.AllOf
 import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.IteratingSystem
-import mariorez.starfishcollector.component.RenderComponent
-import mariorez.starfishcollector.component.TransformComponent
+import component.RenderComponent
+import component.TransformComponent
 
 @AllOf([TransformComponent::class, RenderComponent::class])
 class RenderSystem(
@@ -30,10 +30,11 @@ class RenderSystem(
 
     override fun onTickEntity(entity: Entity) {
         render[entity].apply {
-            transform[entity].apply {
+            transform[entity].also { transform ->
                 sprite.apply {
                     setOriginCenter()
-                    setBounds(position.x, position.y, width, height)
+                    rotation = transform.rotation
+                    setBounds(transform.position.x, transform.position.y, width, height)
                     draw(batch)
                 }
             }

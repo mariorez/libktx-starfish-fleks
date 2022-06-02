@@ -4,9 +4,9 @@ package mariorez.starfishcollector.lwjgl3
 
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration
-import mariorez.starfishcollector.GameBoot
-import mariorez.starfishcollector.GameBoot.Companion.WINDOW_HEIGHT
-import mariorez.starfishcollector.GameBoot.Companion.WINDOW_WIDTH
+import GameBoot
+import GameBoot.Companion.WINDOW_HEIGHT
+import GameBoot.Companion.WINDOW_WIDTH
 
 /** Launches the desktop (LWJGL3) application. */
 fun main() {
