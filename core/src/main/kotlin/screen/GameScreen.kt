@@ -8,6 +8,7 @@ import GameBoot.Companion.WINDOW_WIDTH
 import WorldSize
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.maps.tiled.TiledMap
@@ -18,11 +19,17 @@ import component.AnimationComponent
 import component.InputComponent
 import component.PlayerComponent
 import component.RenderComponent
+import component.RockComponent
+import component.SignComponent
+import component.StarfishComponent
 import component.TransformComponent
 import ktx.assets.async.AssetStorage
 import ktx.assets.disposeSafely
+import ktx.tiled.forEachMapObject
 import ktx.tiled.totalHeight
 import ktx.tiled.totalWidth
+import ktx.tiled.x
+import ktx.tiled.y
 import system.AnimationSystem
 import system.CameraSystem
 import system.InputSystem
@@ -61,6 +68,7 @@ class GameScreen(
         registerAction(Input.Keys.D, Action.Name.RIGHT)
 
         spawnPlayer()
+        spawnObjects()
     }
 
     private fun spawnPlayer() {
@@ -69,7 +77,7 @@ class GameScreen(
             add<InputComponent>()
             add<RenderComponent>()
             add<TransformComponent> {
-                position.set(100f, 100f)
+                position.set(50f, 50f)
                 acceleration = 400f
                 deceleration = 250f
                 maxSpeed = 150f
@@ -80,6 +88,34 @@ class GameScreen(
                     .findRegion("turtle")
                 frames = 6
                 frameDuration = 0.1f
+            }
+        }
+    }
+
+    private fun spawnObjects() {
+        tiledMap.forEachMapObject("collision") { obj ->
+            val texture = assets.get<Texture>("${obj.name}.png")
+            world.entity {
+                add<TransformComponent> { position.set(obj.x, obj.y) }
+                add<RenderComponent> {
+                    sprite.apply {
+                        setRegion(texture)
+                        setSize(texture.width.toFloat(), texture.height.toFloat())
+                    }
+                }
+                when (obj.name) {
+                    "rock" -> {
+                        add<RockComponent>()
+                    }
+
+                    "starfish" -> {
+                        add<StarfishComponent>()
+                    }
+
+                    "sign" -> {
+                        add<SignComponent>()
+                    }
+                }
             }
         }
     }
@@ -103,5 +139,7 @@ class GameScreen(
         world.dispose()
         batch.disposeSafely()
         assets.disposeSafely()
+        mapRenderer.disposeSafely()
+        tiledMap.disposeSafely()
     }
 }
