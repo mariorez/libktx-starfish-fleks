@@ -1,6 +1,7 @@
 package screen
 
 import Action
+import Action.Type.START
 import BaseScreen
 import GameBoot.Companion.WINDOW_HEIGHT
 import GameBoot.Companion.WINDOW_WIDTH
@@ -23,6 +24,7 @@ import ktx.assets.disposeSafely
 import ktx.tiled.totalHeight
 import ktx.tiled.totalWidth
 import system.AnimationSystem
+import system.CameraSystem
 import system.InputSystem
 import system.MovementSystem
 import system.RenderSystem
@@ -39,6 +41,7 @@ class GameScreen(
     private val tiledMap = assets.get<TiledMap>("map.tmx")
     private val mapRenderer = OrthoCachedTiledMapRenderer(tiledMap).apply { setBlending(true) }
     private val worldSize = WorldSize(tiledMap.totalWidth(), tiledMap.totalHeight())
+    private var turtle: Entity by Delegates.notNull()
     private val world = World {
         inject(batch)
         inject(camera)
@@ -46,10 +49,10 @@ class GameScreen(
         inject(worldSize)
         system<InputSystem>()
         system<MovementSystem>()
+        system<CameraSystem>()
         system<AnimationSystem>()
         system<RenderSystem>()
     }
-    private var turtle: Entity by Delegates.notNull()
 
     init {
         registerAction(Input.Keys.W, Action.Name.UP)
@@ -83,7 +86,7 @@ class GameScreen(
 
     override fun doAction(action: Action) {
         val input = world.mapper<InputComponent>()[turtle]
-        val isStarting = action.type == Action.Type.START
+        val isStarting = action.type == START
         when (action.name) {
             Action.Name.UP -> input.up = isStarting
             Action.Name.DOWN -> input.down = isStarting
