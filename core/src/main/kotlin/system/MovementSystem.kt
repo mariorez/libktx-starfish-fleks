@@ -3,23 +3,23 @@ package system
 import WorldSize
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
-import com.github.quillraven.fleks.AllOf
 import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.Entity
-import com.github.quillraven.fleks.IteratingSystem
-import component.PlayerComponent
+import com.github.quillraven.fleks.IntervalSystem
 import component.RenderComponent
 import component.TransformComponent
+import kotlin.properties.Delegates
 
-@AllOf([PlayerComponent::class])
 class MovementSystem(
     private val worldSize: WorldSize,
     private val transform: ComponentMapper<TransformComponent>,
     private val render: ComponentMapper<RenderComponent>
-) : IteratingSystem() {
+) : IntervalSystem() {
 
-    override fun onTickEntity(entity: Entity) {
-        transform[entity].apply {
+    var player: Entity by Delegates.notNull()
+
+    override fun onTick() {
+        transform[player].apply {
             // apply acceleration
             velocity.add(
                 accelerator.x * deltaTime,
@@ -46,7 +46,7 @@ class MovementSystem(
             // move by
             if (velocity.x != 0f || velocity.y != 0f) {
                 position.add(velocity.x * deltaTime, velocity.y * deltaTime)
-                boundToWorld(position, render[entity].sprite.width, render[entity].sprite.height)
+                boundToWorld(position, render[player].sprite.width, render[player].sprite.height)
             }
 
             // set rotation when moving

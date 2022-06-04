@@ -9,6 +9,7 @@ import WorldSize
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.maps.tiled.TiledMap
@@ -16,6 +17,7 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthoCachedTiledMapRenderer
 import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.World
 import component.AnimationComponent
+import component.BoundingBoxComponent
 import component.InputComponent
 import component.PlayerComponent
 import component.RenderComponent
@@ -23,6 +25,8 @@ import component.RockComponent
 import component.SignComponent
 import component.StarfishComponent
 import component.TransformComponent
+import generatePolygon
+import generateRectangle
 import ktx.assets.async.AssetStorage
 import ktx.assets.disposeSafely
 import ktx.tiled.forEachMapObject
@@ -32,6 +36,7 @@ import ktx.tiled.x
 import ktx.tiled.y
 import system.AnimationSystem
 import system.CameraSystem
+import system.CollisionSystem
 import system.InputSystem
 import system.MovementSystem
 import system.RenderSystem
@@ -56,6 +61,7 @@ class GameScreen(
         inject(worldSize)
         system<InputSystem>()
         system<MovementSystem>()
+        system<CollisionSystem>()
         system<CameraSystem>()
         system<AnimationSystem>()
         system<RenderSystem>()
@@ -69,6 +75,15 @@ class GameScreen(
 
         spawnPlayer()
         spawnObjects()
+
+        world.systems.forEach {
+            when (it::class) {
+                InputSystem::class -> (it as InputSystem).player = turtle
+                MovementSystem::class -> (it as MovementSystem).player = turtle
+                CameraSystem::class -> (it as CameraSystem).player = turtle
+                CollisionSystem::class -> (it as CollisionSystem).player = turtle
+            }
+        }
     }
 
     private fun spawnPlayer() {
@@ -88,6 +103,12 @@ class GameScreen(
                     .findRegion("turtle")
                 frames = 6
                 frameDuration = 0.1f
+            }.apply {
+                add<BoundingBoxComponent> {
+                    val width = (region.regionWidth / frames)
+                    val height = region.regionHeight
+                    polygon = generatePolygon(8, width, height)
+                }
             }
         }
     }
@@ -97,23 +118,33 @@ class GameScreen(
             val texture = assets.get<Texture>("${obj.name}.png")
             world.entity {
                 add<TransformComponent> { position.set(obj.x, obj.y) }
-                add<RenderComponent> {
-                    sprite.apply {
-                        setRegion(texture)
-                        setSize(texture.width.toFloat(), texture.height.toFloat())
-                    }
-                }
+                add<RenderComponent> { sprite = Sprite(texture) }
                 when (obj.name) {
                     "rock" -> {
                         add<RockComponent>()
+                        add<BoundingBoxComponent> {
+                            polygon = generatePolygon(8, texture.width, texture.height).apply {
+                                setPosition(obj.x, obj.y)
+                            }
+                        }
                     }
 
                     "starfish" -> {
                         add<StarfishComponent>()
+                        add<BoundingBoxComponent> {
+                            polygon = generatePolygon(8, texture.width, texture.height).apply {
+                                setPosition(obj.x, obj.y)
+                            }
+                        }
                     }
 
                     "sign" -> {
                         add<SignComponent>()
+                        add<BoundingBoxComponent> {
+                            polygon = generateRectangle(texture.width, texture.height).apply {
+                                setPosition(obj.x, obj.y)
+                            }
+                        }
                     }
                 }
             }
