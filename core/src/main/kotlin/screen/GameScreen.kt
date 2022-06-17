@@ -67,6 +67,7 @@ class GameScreen(
         inject(camera)
         inject(mapRenderer)
         inject(worldSize)
+        inject(assets)
         system<InputSystem>()
         system<MovementSystem>()
         system<CollisionSystem>()

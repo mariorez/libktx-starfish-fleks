@@ -1,5 +1,6 @@
 package system
 
+import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector
 import com.badlogic.gdx.math.Polygon
@@ -8,6 +9,7 @@ import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.IteratingSystem
 import com.github.quillraven.fleks.NoneOf
+import component.AnimationComponent
 import component.BoundingBoxComponent
 import component.FadeEffectComponent
 import component.PlayerComponent
@@ -16,11 +18,13 @@ import component.RockComponent
 import component.SignComponent
 import component.StarfishComponent
 import component.TransformComponent
+import ktx.assets.async.AssetStorage
 import kotlin.properties.Delegates
 
 @AllOf([BoundingBoxComponent::class])
 @NoneOf([PlayerComponent::class])
 class CollisionSystem(
+    private val assets: AssetStorage,
     private val transform: ComponentMapper<TransformComponent>,
     private val box: ComponentMapper<BoundingBoxComponent>,
     private val render: ComponentMapper<RenderComponent>,
@@ -41,6 +45,7 @@ class CollisionSystem(
             setScale(playerSprite.scaleX, playerSprite.scaleY)
         }
 
+        val currentSprite = render[entity].sprite
         val objectBox = box[entity].polygon
 
         val mtv = MinimumTranslationVector()
@@ -58,6 +63,21 @@ class CollisionSystem(
             configureEntity(entity) {
                 box.remove(entity)
                 fade.add(entity).apply { removeEntityOnEnd = true }
+            }
+            world.entity {
+                add<RenderComponent>()
+                add<FadeEffectComponent> { removeEntityOnEnd = true }
+                add<TransformComponent> {
+                    position.x = currentSprite.x - 15
+                    position.y = currentSprite.y - 7
+                }
+                add<AnimationComponent> {
+                    region = assets
+                        .get<TextureAtlas>("starfish-collector.atlas")
+                        .findRegion("whirlpool")
+                    frames = 10
+                    frameDuration = 0.1f
+                }
             }
         }
     }

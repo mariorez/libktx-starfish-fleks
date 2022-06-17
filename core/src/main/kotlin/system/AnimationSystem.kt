@@ -7,11 +7,10 @@ import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.IteratingSystem
 import component.AnimationComponent
-import component.PlayerComponent
 import component.RenderComponent
 import ktx.collections.gdxArrayOf
 
-@AllOf([PlayerComponent::class])
+@AllOf([AnimationComponent::class])
 class AnimationSystem(
     private val animation: ComponentMapper<AnimationComponent>,
     private val render: ComponentMapper<RenderComponent>
