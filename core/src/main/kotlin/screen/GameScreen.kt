@@ -26,6 +26,7 @@ import component.InputComponent
 import component.PlayerComponent
 import component.RenderComponent
 import component.RockComponent
+import component.RotateEffectComponent
 import component.SignComponent
 import component.StarfishComponent
 import component.TransformComponent
@@ -45,6 +46,7 @@ import system.CollisionSystem
 import system.InputSystem
 import system.MovementSystem
 import system.RenderSystem
+import system.RotateEffectSystem
 import kotlin.properties.Delegates
 
 class GameScreen(
@@ -69,6 +71,7 @@ class GameScreen(
         system<CollisionSystem>()
         system<CameraSystem>()
         system<AnimationSystem>()
+        system<RotateEffectSystem>()
         system<RenderSystem>()
     }
 
@@ -82,7 +85,6 @@ class GameScreen(
             registerAction(Input.Keys.RIGHT, Action.Name.RIGHT)
         }
 
-        spawnPlayer()
         spawnObjects()
 
         world.systems.forEach {
@@ -98,13 +100,13 @@ class GameScreen(
         }
     }
 
-    private fun spawnPlayer() {
+    private fun spawnPlayer(x: Float, y: Float) {
         turtle = world.entity {
             add<PlayerComponent>()
             add<InputComponent>()
             add<RenderComponent>()
             add<TransformComponent> {
-                position.set(50f, 50f)
+                position.set(x, y)
                 acceleration = 400f
                 deceleration = 250f
                 maxSpeed = 150f
@@ -127,34 +129,39 @@ class GameScreen(
 
     private fun spawnObjects() {
         tiledMap.forEachMapObject("collision") { obj ->
-            val texture = assets.get<Texture>("${obj.name}.png")
-            world.entity {
-                add<TransformComponent> { position.set(obj.x, obj.y) }
-                add<RenderComponent> { sprite = Sprite(texture) }
-                when (obj.name) {
-                    "rock" -> {
-                        add<RockComponent>()
-                        add<BoundingBoxComponent> {
-                            polygon = generatePolygon(8, texture.width, texture.height).apply {
-                                setPosition(obj.x, obj.y)
+            if (obj.name == "turtle") {
+                spawnPlayer(obj.x, obj.y)
+            } else {
+                val texture = assets.get<Texture>("${obj.name}.png")
+                world.entity {
+                    add<TransformComponent> { position.set(obj.x, obj.y) }
+                    add<RenderComponent> { sprite = Sprite(texture) }
+                    when (obj.name) {
+                        "rock" -> {
+                            add<RockComponent>()
+                            add<BoundingBoxComponent> {
+                                polygon = generatePolygon(8, texture.width, texture.height).apply {
+                                    setPosition(obj.x, obj.y)
+                                }
                             }
                         }
-                    }
 
-                    "starfish" -> {
-                        add<StarfishComponent>()
-                        add<BoundingBoxComponent> {
-                            polygon = generatePolygon(8, texture.width, texture.height).apply {
-                                setPosition(obj.x, obj.y)
+                        "starfish" -> {
+                            add<StarfishComponent>()
+                            add<RotateEffectComponent> { speed = 1f }
+                            add<BoundingBoxComponent> {
+                                polygon = generatePolygon(8, texture.width, texture.height).apply {
+                                    setPosition(obj.x, obj.y)
+                                }
                             }
                         }
-                    }
 
-                    "sign" -> {
-                        add<SignComponent>()
-                        add<BoundingBoxComponent> {
-                            polygon = generateRectangle(texture.width, texture.height).apply {
-                                setPosition(obj.x, obj.y)
+                        "sign" -> {
+                            add<SignComponent>()
+                            add<BoundingBoxComponent> {
+                                polygon = generateRectangle(texture.width, texture.height).apply {
+                                    setPosition(obj.x, obj.y)
+                                }
                             }
                         }
                     }

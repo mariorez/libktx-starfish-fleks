@@ -13,6 +13,7 @@ import component.PlayerComponent
 import component.RenderComponent
 import component.RockComponent
 import component.SignComponent
+import component.StarfishComponent
 import component.TransformComponent
 import kotlin.properties.Delegates
 
@@ -23,7 +24,8 @@ class CollisionSystem(
     private val box: ComponentMapper<BoundingBoxComponent>,
     private val render: ComponentMapper<RenderComponent>,
     private val rock: ComponentMapper<RockComponent>,
-    private val sign: ComponentMapper<SignComponent>
+    private val sign: ComponentMapper<SignComponent>,
+    private val starfish: ComponentMapper<StarfishComponent>
 ) : IteratingSystem() {
 
     var player: Entity by Delegates.notNull()
@@ -37,9 +39,7 @@ class CollisionSystem(
             setScale(playerSprite.scaleX, playerSprite.scaleY)
         }
 
-        val currentSprite = render[entity].sprite
         val objectBox = box[entity].polygon
-
 
         val mtv = MinimumTranslationVector()
 
@@ -50,6 +50,10 @@ class CollisionSystem(
                 position.x += mtv.normal.x * mtv.depth
                 position.y += mtv.normal.y * mtv.depth
             }
+        }
+
+        if (starfish.contains(entity)) {
+            world.remove(entity)
         }
     }
 
