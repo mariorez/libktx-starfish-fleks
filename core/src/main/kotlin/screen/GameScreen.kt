@@ -12,8 +12,12 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.renderers.OrthoCachedTiledMapRenderer
+import com.badlogic.gdx.scenes.scene2d.ui.Table
+import com.badlogic.gdx.scenes.scene2d.ui.Touchpad
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.World
 import component.AnimationComponent
@@ -27,6 +31,7 @@ import component.StarfishComponent
 import component.TransformComponent
 import generatePolygon
 import generateRectangle
+import ktx.app.Platform
 import ktx.assets.async.AssetStorage
 import ktx.assets.disposeSafely
 import ktx.tiled.forEachMapObject
@@ -53,6 +58,7 @@ class GameScreen(
     private val mapRenderer = OrthoCachedTiledMapRenderer(tiledMap).apply { setBlending(true) }
     private val worldSize = WorldSize(tiledMap.totalWidth(), tiledMap.totalHeight())
     private var turtle: Entity by Delegates.notNull()
+    private lateinit var touchpad: Touchpad
     private val world = World {
         inject(batch)
         inject(camera)
@@ -67,20 +73,27 @@ class GameScreen(
     }
 
     init {
-        registerAction(Input.Keys.W, Action.Name.UP)
-        registerAction(Input.Keys.S, Action.Name.DOWN)
-        registerAction(Input.Keys.A, Action.Name.LEFT)
-        registerAction(Input.Keys.D, Action.Name.RIGHT)
+        if (Platform.isMobile) {
+            buildTouchpad()
+        } else {
+            registerAction(Input.Keys.UP, Action.Name.UP)
+            registerAction(Input.Keys.DOWN, Action.Name.DOWN)
+            registerAction(Input.Keys.LEFT, Action.Name.LEFT)
+            registerAction(Input.Keys.RIGHT, Action.Name.RIGHT)
+        }
 
         spawnPlayer()
         spawnObjects()
 
         world.systems.forEach {
             when (it::class) {
-                InputSystem::class -> (it as InputSystem).player = turtle
                 MovementSystem::class -> (it as MovementSystem).player = turtle
                 CameraSystem::class -> (it as CameraSystem).player = turtle
                 CollisionSystem::class -> (it as CollisionSystem).player = turtle
+                InputSystem::class -> {
+                    (it as InputSystem).player = turtle
+                    if (Platform.isMobile) it.touchpad = touchpad
+                }
             }
         }
     }
@@ -150,6 +163,18 @@ class GameScreen(
         }
     }
 
+    private fun buildTouchpad() {
+        touchpad = Touchpad(5f, Touchpad.TouchpadStyle().apply {
+            background = TextureRegionDrawable(TextureRegion(TextureRegion(assets.get<Texture>("touchpad-bg.png"))))
+            knob = TextureRegionDrawable(TextureRegion(assets.get<Texture>("touchpad-knob.png")))
+        })
+
+        uiStage.addActor(Table().apply {
+            setFillParent(true)
+            add(touchpad).expandY().expandX().left().bottom()
+        })
+    }
+
     override fun doAction(action: Action) {
         val input = world.mapper<InputComponent>()[turtle]
         val isStarting = action.type == START
@@ -163,9 +188,11 @@ class GameScreen(
 
     override fun render(delta: Float) {
         world.update(delta)
+        uiStage.draw()
     }
 
     override fun dispose() {
+        super.dispose()
         world.dispose()
         batch.disposeSafely()
         assets.disposeSafely()
