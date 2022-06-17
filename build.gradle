@@ -9,6 +9,7 @@ buildscript {
         maven { url 'https://s01.oss.sonatype.org/content/repositories/snapshots/' }
     }
     dependencies {
+        classpath "com.android.tools.build:gradle:$androidPluginVersion"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
 
         // This follows advice from https://blog.gradle.org/log4j-vulnerability
@@ -29,7 +30,7 @@ allprojects {
     apply plugin: 'idea'
 }
 
-configure(subprojects) {
+configure(subprojects - project(':android')) {
     apply plugin: 'java-library'
     apply plugin: 'kotlin'
     sourceCompatibility = 11

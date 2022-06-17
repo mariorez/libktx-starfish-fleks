@@ -46,10 +46,9 @@ class GameScreen(
     private val assets: AssetStorage
 ) : BaseScreen() {
     private val batch = SpriteBatch()
-    private val camera = OrthographicCamera(
-        WINDOW_WIDTH.toFloat(),
-        WINDOW_HEIGHT.toFloat()
-    ).apply { setToOrtho(false) }
+    private val camera = OrthographicCamera().apply {
+        setToOrtho(false, WINDOW_WIDTH.toFloat(), WINDOW_HEIGHT.toFloat())
+    }
     private val tiledMap = assets.get<TiledMap>("map.tmx")
     private val mapRenderer = OrthoCachedTiledMapRenderer(tiledMap).apply { setBlending(true) }
     private val worldSize = WorldSize(tiledMap.totalWidth(), tiledMap.totalHeight())

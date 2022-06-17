@@ -13,6 +13,7 @@ dependencies {
     api "io.github.libktx:ktx-freetype-async:$ktxVersion"
     api "io.github.libktx:ktx-freetype:$ktxVersion"
     api "io.github.libktx:ktx-graphics:$ktxVersion"
+    api "io.github.libktx:ktx-i18n:$ktxVersion"
     api "io.github.libktx:ktx-log:$ktxVersion"
     api "io.github.libktx:ktx-math:$ktxVersion"
     api "io.github.libktx:ktx-preferences:$ktxVersion"
