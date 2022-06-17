@@ -9,7 +9,7 @@ import component.RotateEffectComponent.Direction.CLOCKWISE
 import component.RotateEffectComponent.Direction.COUNTERCLOCKWISE
 import component.TransformComponent
 
-@AllOf([RotateEffectComponent::class])
+@AllOf([TransformComponent::class, RotateEffectComponent::class])
 class RotateEffectSystem(
     private val transform: ComponentMapper<TransformComponent>,
     private val rotate: ComponentMapper<RotateEffectComponent>

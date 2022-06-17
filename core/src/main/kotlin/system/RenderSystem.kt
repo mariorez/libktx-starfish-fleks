@@ -7,8 +7,10 @@ import com.github.quillraven.fleks.AllOf
 import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.IteratingSystem
+import com.github.quillraven.fleks.collection.compareEntity
 import component.RenderComponent
 import component.TransformComponent
+import ktx.graphics.use
 
 @AllOf([TransformComponent::class, RenderComponent::class])
 class RenderSystem(
@@ -17,15 +19,18 @@ class RenderSystem(
     private val mapRenderer: OrthoCachedTiledMapRenderer,
     private val transform: ComponentMapper<TransformComponent>,
     private val render: ComponentMapper<RenderComponent>
-) : IteratingSystem() {
+) : IteratingSystem(
+    compareEntity { entA, entB -> transform[entA].zIndex.compareTo(transform[entB].zIndex) }
+) {
 
     override fun onTick() {
-        mapRenderer.setView(camera)
-        mapRenderer.render()
-        batch.projectionMatrix = camera.combined
-        batch.begin()
-        super.onTick()
-        batch.end()
+        mapRenderer.apply {
+            setView(camera)
+            render()
+        }
+        batch.use(camera) {
+            super.onTick()
+        }
     }
 
     override fun onTickEntity(entity: Entity) {

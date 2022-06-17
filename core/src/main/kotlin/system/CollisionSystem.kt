@@ -9,6 +9,7 @@ import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.IteratingSystem
 import com.github.quillraven.fleks.NoneOf
 import component.BoundingBoxComponent
+import component.FadeEffectComponent
 import component.PlayerComponent
 import component.RenderComponent
 import component.RockComponent
@@ -23,6 +24,7 @@ class CollisionSystem(
     private val transform: ComponentMapper<TransformComponent>,
     private val box: ComponentMapper<BoundingBoxComponent>,
     private val render: ComponentMapper<RenderComponent>,
+    private val fade: ComponentMapper<FadeEffectComponent>,
     private val rock: ComponentMapper<RockComponent>,
     private val sign: ComponentMapper<SignComponent>,
     private val starfish: ComponentMapper<StarfishComponent>
@@ -53,7 +55,10 @@ class CollisionSystem(
         }
 
         if (starfish.contains(entity)) {
-            world.remove(entity)
+            configureEntity(entity) {
+                box.remove(entity)
+                fade.add(entity).apply { removeEntityOnEnd = true }
+            }
         }
     }
 

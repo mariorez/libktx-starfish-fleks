@@ -43,6 +43,7 @@ import ktx.tiled.y
 import system.AnimationSystem
 import system.CameraSystem
 import system.CollisionSystem
+import system.FadeEffectSystem
 import system.InputSystem
 import system.MovementSystem
 import system.RenderSystem
@@ -72,6 +73,7 @@ class GameScreen(
         system<CameraSystem>()
         system<AnimationSystem>()
         system<RotateEffectSystem>()
+        system<FadeEffectSystem>()
         system<RenderSystem>()
     }
 
@@ -107,6 +109,7 @@ class GameScreen(
             add<RenderComponent>()
             add<TransformComponent> {
                 position.set(x, y)
+                zIndex = 1f
                 acceleration = 400f
                 deceleration = 250f
                 maxSpeed = 150f
