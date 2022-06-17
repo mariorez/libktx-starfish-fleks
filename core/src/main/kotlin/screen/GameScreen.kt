@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.renderers.OrthoCachedTiledMapRenderer
+import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
@@ -51,7 +52,8 @@ import system.RotateEffectSystem
 import kotlin.properties.Delegates
 
 class GameScreen(
-    private val assets: AssetStorage
+    private val assets: AssetStorage,
+    labelStyle: Label.LabelStyle
 ) : BaseScreen() {
     private val batch = SpriteBatch()
     private val camera = OrthographicCamera().apply {
@@ -61,6 +63,7 @@ class GameScreen(
     private val mapRenderer = OrthoCachedTiledMapRenderer(tiledMap).apply { setBlending(true) }
     private val worldSize = WorldSize(tiledMap.totalWidth(), tiledMap.totalHeight())
     private var turtle: Entity by Delegates.notNull()
+    private var starFishLabel = Label("", labelStyle)
     private lateinit var touchpad: Touchpad
     private val world = World {
         inject(batch)
@@ -87,6 +90,12 @@ class GameScreen(
             registerAction(Input.Keys.LEFT, Action.Name.LEFT)
             registerAction(Input.Keys.RIGHT, Action.Name.RIGHT)
         }
+
+        uiStage.addActor(Table().apply {
+            setFillParent(true)
+            pad(5f)
+            add(starFishLabel).expandX().expandY().left().top()
+        })
 
         spawnObjects()
 
@@ -199,6 +208,7 @@ class GameScreen(
 
     override fun render(delta: Float) {
         world.update(delta)
+        starFishLabel.setText("Starfish Left: ")
         uiStage.draw()
     }
 
