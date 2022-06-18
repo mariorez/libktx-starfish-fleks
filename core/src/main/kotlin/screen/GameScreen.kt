@@ -37,6 +37,7 @@ import ktx.tiled.totalHeight
 import ktx.tiled.totalWidth
 import ktx.tiled.x
 import ktx.tiled.y
+import listener.StarfishCounterListener
 import system.AnimationSystem
 import system.CameraSystem
 import system.CollisionSystem
@@ -56,6 +57,7 @@ class GameScreen(
     private var turtle: Entity by Delegates.notNull()
     private var starFishLabel = Label("", labelStyle)
     private lateinit var touchpad: Touchpad
+    private lateinit var counter: StarfishCounterListener
     private val world = World {
         inject(batch)
         inject(camera)
@@ -70,6 +72,7 @@ class GameScreen(
         system<RotateEffectSystem>()
         system<FadeEffectSystem>()
         system<RenderSystem>()
+        familyListener<StarfishCounterListener>()
     }
 
     init {
@@ -201,7 +204,7 @@ class GameScreen(
 
     override fun render(delta: Float) {
         world.update(delta)
-        starFishLabel.setText("Starfish Left: ")
+        starFishLabel.setText("Starfish Left: ${StarfishCounterListener.counter}")
         uiStage.draw()
     }
 
