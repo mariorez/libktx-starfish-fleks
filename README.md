@@ -8,6 +8,13 @@ Controls
 
 ![alt text](starfishcollector-screeshot.png "Starfish Collector")
 
+## Running local
+
+Desktop version
+```
+./gradlew lwjgl3:run
+```
+
 ## Setup
 
 - **Kotlin** 1.6.21
