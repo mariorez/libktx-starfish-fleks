@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
+import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.World
 import component.AnimationComponent
@@ -55,10 +56,10 @@ class GameScreen(
     private val assets: AssetStorage,
     labelStyle: Label.LabelStyle
 ) : BaseScreen() {
-    private val batch = SpriteBatch()
-    private val camera = OrthographicCamera().apply {
-        setToOrtho(false, WINDOW_WIDTH.toFloat(), WINDOW_HEIGHT.toFloat())
+    private val viewport = ExtendViewport(WINDOW_WIDTH.toFloat(), WINDOW_HEIGHT.toFloat()).apply {
+        (camera as OrthographicCamera).setToOrtho(false)
     }
+    private val batch = SpriteBatch()
     private val tiledMap = assets.get<TiledMap>("map.tmx")
     private val mapRenderer = OrthoCachedTiledMapRenderer(tiledMap).apply { setBlending(true) }
     private val worldSize = WorldSize(tiledMap.totalWidth(), tiledMap.totalHeight())
@@ -67,7 +68,7 @@ class GameScreen(
     private lateinit var touchpad: Touchpad
     private val world = World {
         inject(batch)
-        inject(camera)
+        inject(viewport)
         inject(mapRenderer)
         inject(worldSize)
         inject(assets)

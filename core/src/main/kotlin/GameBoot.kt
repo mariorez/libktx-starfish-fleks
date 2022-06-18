@@ -19,8 +19,8 @@ import screen.GameScreen
 class GameBoot : KtxGame<KtxScreen>() {
 
     companion object {
-        const val WINDOW_WIDTH = 864
-        const val WINDOW_HEIGHT = 486
+        const val WINDOW_WIDTH = 1920
+        const val WINDOW_HEIGHT = 1080
     }
 
     override fun create() {
@@ -53,7 +53,7 @@ class GameBoot : KtxGame<KtxScreen>() {
         return FreeTypeFontGenerator(Gdx.files.internal("OpenSans.ttf"))
             .generateFont(
                 FreeTypeFontGenerator.FreeTypeFontParameter().apply {
-                    size = if (Platform.isMobile) 65 else 28
+                    size = 50
                     color = Color.WHITE
                     borderColor = Color.BLACK
                     borderWidth = 2f

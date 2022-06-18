@@ -3,6 +3,7 @@ package system
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.maps.tiled.renderers.OrthoCachedTiledMapRenderer
+import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.github.quillraven.fleks.AllOf
 import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.Entity
@@ -15,7 +16,7 @@ import ktx.graphics.use
 @AllOf([TransformComponent::class, RenderComponent::class])
 class RenderSystem(
     private val batch: SpriteBatch,
-    private val camera: OrthographicCamera,
+    private val viewport: ExtendViewport,
     private val mapRenderer: OrthoCachedTiledMapRenderer,
     private val transform: ComponentMapper<TransformComponent>,
     private val render: ComponentMapper<RenderComponent>
@@ -25,10 +26,10 @@ class RenderSystem(
 
     override fun onTick() {
         mapRenderer.apply {
-            setView(camera)
+            setView(viewport.camera as OrthographicCamera)
             render()
         }
-        batch.use(camera) {
+        batch.use(viewport.camera) {
             super.onTick()
         }
     }
