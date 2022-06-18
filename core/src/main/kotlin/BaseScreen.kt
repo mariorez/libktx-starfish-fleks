@@ -1,6 +1,10 @@
+import GameBoot.Companion.gameSizes
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
+import com.badlogic.gdx.graphics.OrthographicCamera
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.Stage
+import com.badlogic.gdx.utils.viewport.FitViewport
 import ktx.app.KtxInputAdapter
 import ktx.app.KtxScreen
 import ktx.app.Platform
@@ -9,7 +13,20 @@ import ktx.assets.disposeSafely
 abstract class BaseScreen : KtxScreen {
 
     private val actionMap = mutableMapOf<Int, Action.Name>()
-    protected val uiStage = Stage()
+    protected val batch = SpriteBatch()
+    protected val camera = OrthographicCamera().apply {
+        setToOrtho(
+            false,
+            gameSizes.windowWidthFloat(),
+            gameSizes.windowHeightFloat()
+        )
+    }
+    protected val uiStage = Stage(
+        FitViewport(
+            gameSizes.windowWidthFloat(),
+            gameSizes.windowHeightFloat()
+        )
+    )
 
     init {
         Gdx.input.inputProcessor = if (Platform.isMobile) InputMultiplexer().apply { addProcessor(uiStage) }

@@ -1,26 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.8" tiledversion="1.8.6" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="96" tileheight="64" infinite="0" nextlayerid="7" nextobjectid="47">
+<map version="1.8" tiledversion="1.8.6" orientation="orthogonal" renderorder="right-down" width="32" height="32" tilewidth="32" tileheight="32" infinite="0" nextlayerid="4" nextobjectid="32">
  <tileset firstgid="1" name="ocean-plants" tilewidth="64" tileheight="64" tilecount="4" columns="2">
   <image source="ocean-plants.png" width="128" height="128"/>
  </tileset>
  <tileset firstgid="5" name="starfish" tilewidth="60" tileheight="53" tilecount="1" columns="1">
   <image source="starfish.png" width="60" height="53"/>
+  <tile id="0" name="starfish"/>
  </tileset>
  <tileset firstgid="6" name="rock" tilewidth="64" tileheight="64" tilecount="1" columns="1">
   <image source="rock.png" width="64" height="64"/>
+  <tile id="0" name="rock"/>
  </tileset>
  <tileset firstgid="7" name="sign" tilewidth="64" tileheight="64" tilecount="1" columns="1">
   <image source="sign.png" width="64" height="64"/>
-  <tile id="0">
+  <tile id="0" name="sign">
    <properties>
     <property name="message" value="Hello, world!"/>
    </properties>
   </tile>
  </tileset>
- <imagelayer id="6" name="water" locked="1">
-  <image source="water-border.jpg" width="3072" height="2048"/>
+ <imagelayer id="2" name="background" locked="1">
+  <image source="large-water.jpg" width="1024" height="1024"/>
  </imagelayer>
- <layer id="2" name="plants" width="32" height="32" locked="1">
+ <layer id="1" name="tile" width="32" height="32" locked="1">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -57,61 +59,42 @@
 </data>
  </layer>
  <objectgroup id="3" name="collision">
-  <object id="1" name="rock" gid="6" x="543.153" y="1262.24" width="64" height="64"/>
-  <object id="2" name="rock" gid="6" x="1316.13" y="1408.47" width="64" height="64"/>
-  <object id="42" name="rock" gid="6" x="1617.28" y="1221.55" width="64" height="64"/>
-  <object id="3" name="rock" gid="6" x="415.153" y="1326.24" width="64" height="64"/>
-  <object id="4" name="rock" gid="6" x="383.153" y="1390.24" width="64" height="64"/>
-  <object id="5" name="rock" gid="6" x="671.153" y="1486.24" width="64" height="64"/>
-  <object id="41" name="rock" gid="6" x="1591.21" y="1633.7" width="64" height="64"/>
-  <object id="6" name="rock" gid="6" x="703.153" y="1550.24" width="64" height="64"/>
-  <object id="40" name="rock" gid="6" x="1693.82" y="1508.71" width="64" height="64"/>
-  <object id="7" name="rock" gid="6" x="735.153" y="1614.24" width="64" height="64"/>
-  <object id="44" name="rock" gid="6" x="1106.91" y="1697.32" width="64" height="64"/>
-  <object id="39" name="rock" gid="6" x="1630.28" y="1888.39" width="64" height="64"/>
-  <object id="8" name="rock" gid="6" x="895.153" y="1486.24" width="64" height="64"/>
-  <object id="45" name="rock" gid="6" x="1266.91" y="1569.32" width="64" height="64"/>
-  <object id="9" name="rock" gid="6" x="255.153" y="1646.24" width="64" height="64"/>
-  <object id="10" name="rock" gid="6" x="223.153" y="1710.24" width="64" height="64"/>
-  <object id="11" name="rock" gid="6" x="511.153" y="1838.24" width="64" height="64"/>
-  <object id="12" name="rock" gid="6" x="575.153" y="1838.24" width="64" height="64"/>
-  <object id="13" name="rock" gid="6" x="863.153" y="1134.24" width="64" height="64"/>
-  <object id="14" name="rock" gid="6" x="831.153" y="1966.24" width="64" height="64"/>
-  <object id="15" name="rock" gid="6" x="314.311" y="1878.35" width="64" height="64"/>
-  <object id="16" name="starfish" gid="5" x="223.153" y="1230.24" width="60" height="53"/>
-  <object id="38" name="starfish" gid="5" x="1369.58" y="1238.55" width="60" height="53"/>
-  <object id="17" name="starfish" gid="5" x="479.153" y="1390.24" width="60" height="53"/>
-  <object id="36" name="starfish" gid="5" x="1818.73" y="1888.69" width="60" height="53"/>
-  <object id="33" name="starfish" gid="5" x="1176.98" y="1427.63" width="60" height="53"/>
-  <object id="35" name="starfish" gid="5" x="1554.97" y="1431.78" width="60" height="53"/>
-  <object id="18" name="starfish" gid="5" x="895.153" y="1390.24" width="60" height="53"/>
-  <object id="19" name="starfish" gid="5" x="703.153" y="1198.24" width="60" height="53"/>
-  <object id="37" name="starfish" gid="5" x="1849.58" y="1206.55" width="60" height="53"/>
-  <object id="20" name="starfish" gid="5" x="799.153" y="1550.24" width="60" height="53"/>
-  <object id="21" name="starfish" gid="5" x="767.153" y="1774.24" width="60" height="53"/>
-  <object id="32" name="starfish" gid="5" x="1294.68" y="1751.4" width="60" height="53"/>
-  <object id="34" name="starfish" gid="5" x="1857.51" y="1593.56" width="60" height="53"/>
-  <object id="22" name="starfish" gid="5" x="575.153" y="1934.24" width="60" height="53"/>
-  <object id="23" name="starfish" gid="5" x="1010.23" y="1893.09" width="60" height="53"/>
-  <object id="46" name="starfish" gid="5" x="1286.45" y="1955.39" width="60" height="53"/>
-  <object id="24" name="starfish" gid="5" x="511.153" y="1646.24" width="60" height="53"/>
-  <object id="25" name="starfish" gid="5" x="191.153" y="1582.24" width="60" height="53"/>
-  <object id="26" name="starfish" gid="5" x="67.3635" y="1379.82" width="60" height="53"/>
-  <object id="27" name="sign" gid="7" x="959.153" y="1166.24" width="64" height="64">
+  <object id="1" name="rock" gid="6" x="512" y="256" width="64" height="64"/>
+  <object id="2" name="rock" gid="6" x="448" y="288" width="64" height="64"/>
+  <object id="3" name="rock" gid="6" x="384" y="320" width="64" height="64"/>
+  <object id="4" name="rock" gid="6" x="352" y="384" width="64" height="64"/>
+  <object id="5" name="rock" gid="6" x="640" y="480" width="64" height="64"/>
+  <object id="6" name="rock" gid="6" x="672" y="544" width="64" height="64"/>
+  <object id="7" name="rock" gid="6" x="704" y="608" width="64" height="64"/>
+  <object id="8" name="rock" gid="6" x="864" y="480" width="64" height="64"/>
+  <object id="9" name="rock" gid="6" x="224" y="640" width="64" height="64"/>
+  <object id="10" name="rock" gid="6" x="192" y="704" width="64" height="64"/>
+  <object id="11" name="rock" gid="6" x="480" y="832" width="64" height="64"/>
+  <object id="12" name="rock" gid="6" x="544" y="832" width="64" height="64"/>
+  <object id="13" name="rock" gid="6" x="832" y="128" width="64" height="64"/>
+  <object id="14" name="rock" gid="6" x="800" y="960" width="64" height="64"/>
+  <object id="15" name="rock" gid="6" x="215.678" y="858.056" width="64" height="64"/>
+  <object id="16" name="starfish" gid="5" x="192" y="224" width="60" height="53"/>
+  <object id="17" name="starfish" gid="5" x="448" y="384" width="60" height="53"/>
+  <object id="18" name="starfish" gid="5" x="864" y="384" width="60" height="53"/>
+  <object id="19" name="starfish" gid="5" x="672" y="192" width="60" height="53"/>
+  <object id="20" name="starfish" gid="5" x="768" y="544" width="60" height="53"/>
+  <object id="21" name="starfish" gid="5" x="736" y="768" width="60" height="53"/>
+  <object id="22" name="starfish" gid="5" x="544" y="928" width="60" height="53"/>
+  <object id="23" name="starfish" gid="5" x="896" y="864" width="60" height="53"/>
+  <object id="24" name="starfish" gid="5" x="480" y="640" width="60" height="53"/>
+  <object id="25" name="starfish" gid="5" x="160" y="576" width="60" height="53"/>
+  <object id="26" name="starfish" gid="5" x="64" y="736" width="60" height="53"/>
+  <object id="27" name="sign" gid="7" x="928" y="160" width="64" height="64">
    <properties>
     <property name="message" value="It's the end of world!"/>
    </properties>
   </object>
-  <object id="43" name="sign" gid="7" x="1553.14" y="1876.53" width="64" height="64">
-   <properties>
-    <property name="message" value="It's the end of world!"/>
-   </properties>
-  </object>
-  <object id="28" name="sign" gid="7" x="63.153" y="1614.24" width="64" height="64">
+  <object id="28" name="sign" gid="7" x="32" y="608" width="64" height="64">
    <properties>
     <property name="message" value="Collect all the Starfish"/>
    </properties>
   </object>
-  <object id="31" name="turtle" x="96.153" y="1756.24" width="45" height="45"/>
+  <object id="31" name="turtle" x="82.0124" y="812.693" width="30" height="30"/>
  </objectgroup>
 </map>

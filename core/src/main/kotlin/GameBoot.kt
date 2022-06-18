@@ -20,8 +20,8 @@ class GameBoot : KtxGame<KtxScreen>() {
 
     companion object {
         var gameSizes = GameSizes(
-            windowWidth = 1280,
-            windowHeight = 720
+            windowWidth = 960,
+            windowHeight = 540
         )
     }
 
@@ -55,7 +55,7 @@ class GameBoot : KtxGame<KtxScreen>() {
         return FreeTypeFontGenerator(Gdx.files.internal("OpenSans.ttf"))
             .generateFont(
                 FreeTypeFontGenerator.FreeTypeFontParameter().apply {
-                    size = 50
+                    size = 34
                     color = Color.WHITE
                     borderColor = Color.BLACK
                     borderWidth = 2f

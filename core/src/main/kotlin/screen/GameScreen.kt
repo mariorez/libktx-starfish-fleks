@@ -5,10 +5,8 @@ import Action.Type.START
 import BaseScreen
 import GameBoot.Companion.gameSizes
 import com.badlogic.gdx.Input
-import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.Sprite
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.maps.tiled.TiledMap
@@ -17,7 +15,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
-import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.World
 import component.AnimationComponent
@@ -54,13 +51,6 @@ class GameScreen(
     private val assets: AssetStorage,
     labelStyle: Label.LabelStyle
 ) : BaseScreen() {
-    private val batch = SpriteBatch()
-    private val viewport = ExtendViewport(
-        gameSizes.windowWidthFloat(),
-        gameSizes.windowHeightFloat()
-    ).apply {
-        (camera as OrthographicCamera).setToOrtho(false)
-    }
     private val tiledMap = assets.get<TiledMap>("map.tmx")
     private val mapRenderer = OrthoCachedTiledMapRenderer(tiledMap).apply { setBlending(true) }
     private var turtle: Entity by Delegates.notNull()
@@ -68,7 +58,7 @@ class GameScreen(
     private lateinit var touchpad: Touchpad
     private val world = World {
         inject(batch)
-        inject(viewport)
+        inject(camera)
         inject(mapRenderer)
         inject(gameSizes)
         inject(assets)
