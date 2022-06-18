@@ -1,28 +1,26 @@
-# starfishcollector
+# Starfish Collector
 
-A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/tommyettinger/gdx-liftoff).
+Starfish Collector, where you help the player’s character, a turtle, swim around the ocean floor while looking for a starfish.
 
-This project was generated with a Kotlin project template that includes Kotlin application launchers and [KTX](https://libktx.github.io/) utilities.
+Controls
 
-## Gradle
+- Left, Right, Up and Down keys: moves the turtle
 
-This project uses [Gradle](http://gradle.org/) to manage dependencies.
-The Gradle wrapper was included, so you can run Gradle tasks using `gradlew.bat` or `./gradlew` commands.
-Useful Gradle tasks and flags:
+![alt text](starfishcollector-screeshot.png "Starfish Collector")
 
-- `--continue`: when using this flag, errors will not stop the tasks from running.
-- `--daemon`: thanks to this flag, Gradle daemon will be used to run chosen tasks.
-- `--offline`: when using this flag, cached dependency archives will be used.
-- `--refresh-dependencies`: this flag forces validation of all dependencies. Useful for snapshot versions.
-- `build`: builds sources and archives of every project.
-- `cleanEclipse`: removes Eclipse project data.
-- `cleanIdea`: removes IntelliJ project data.
-- `clean`: removes `build` folders, which store compiled classes and built archives.
-- `eclipse`: generates Eclipse project data.
-- `idea`: generates IntelliJ project data.
-- `lwjgl3:jar`: builds application's runnable jar, which can be found at `lwjgl3/build/libs`.
-- `lwjgl3:run`: starts the application.
-- `test`: runs unit tests (if any).
+## Setup
 
-Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
-For example, `core:clean` removes `build` folder only from the `core` project.
+- **Kotlin** 1.6.21
+- **JVM** 11
+- **Gradle** Wrapper 7.4.2
+- **LigKTX** 11.11.0-rc1: https://libktx.github.io
+- **LigGDX** 1.11.0: https://libgdx.com
+- **Fleks ECS Library** 1.3-JVM: https://github.com/Quillraven/Fleks
+- Generated with **GDX Liftoff**: https://github.com/tommyettinger/gdx-liftoff
+
+## Disclaimer
+
+This game is the result of reading, studying and learning the examples shown in the book "**Java Game Development with LibGDX**" by the author Lee Stemkoski.
+
+- **Book site**: https://www.apress.com/gp/book/9781484233238
+- **Source-code**: https://github.com/Apress/java-game-dev-LibGDX
