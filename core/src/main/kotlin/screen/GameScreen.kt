@@ -3,9 +3,7 @@ package screen
 import Action
 import Action.Type.START
 import BaseScreen
-import GameBoot.Companion.WINDOW_HEIGHT
-import GameBoot.Companion.WINDOW_WIDTH
-import WorldSize
+import GameBoot.Companion.gameSizes
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.Texture
@@ -56,13 +54,15 @@ class GameScreen(
     private val assets: AssetStorage,
     labelStyle: Label.LabelStyle
 ) : BaseScreen() {
-    private val viewport = ExtendViewport(WINDOW_WIDTH.toFloat(), WINDOW_HEIGHT.toFloat()).apply {
+    private val batch = SpriteBatch()
+    private val viewport = ExtendViewport(
+        gameSizes.windowWidthFloat(),
+        gameSizes.windowHeightFloat()
+    ).apply {
         (camera as OrthographicCamera).setToOrtho(false)
     }
-    private val batch = SpriteBatch()
     private val tiledMap = assets.get<TiledMap>("map.tmx")
     private val mapRenderer = OrthoCachedTiledMapRenderer(tiledMap).apply { setBlending(true) }
-    private val worldSize = WorldSize(tiledMap.totalWidth(), tiledMap.totalHeight())
     private var turtle: Entity by Delegates.notNull()
     private var starFishLabel = Label("", labelStyle)
     private lateinit var touchpad: Touchpad
@@ -70,7 +70,7 @@ class GameScreen(
         inject(batch)
         inject(viewport)
         inject(mapRenderer)
-        inject(worldSize)
+        inject(gameSizes)
         inject(assets)
         system<InputSystem>()
         system<MovementSystem>()
@@ -83,6 +83,9 @@ class GameScreen(
     }
 
     init {
+        gameSizes.worldWidth = tiledMap.totalWidth()
+        gameSizes.worldHeight = tiledMap.totalHeight()
+
         if (Platform.isMobile) {
             buildTouchpad()
         } else {
@@ -100,15 +103,14 @@ class GameScreen(
 
         spawnObjects()
 
-        world.systems.forEach {
-            when (it::class) {
-                MovementSystem::class -> (it as MovementSystem).player = turtle
-                CameraSystem::class -> (it as CameraSystem).player = turtle
-                CollisionSystem::class -> (it as CollisionSystem).player = turtle
-                InputSystem::class -> {
-                    (it as InputSystem).player = turtle
-                    if (Platform.isMobile) it.touchpad = touchpad
-                }
+        // late injections
+        world.apply {
+            system<MovementSystem>().player = turtle
+            system<CameraSystem>().player = turtle
+            system<CollisionSystem>().player = turtle
+            system<InputSystem>().also {
+                it.player = turtle
+                if (Platform.isMobile) it.touchpad = touchpad
             }
         }
     }

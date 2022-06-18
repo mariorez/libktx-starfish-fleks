@@ -1,9 +1,15 @@
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Polygon
 
-data class WorldSize(
-    var width: Int, var height: Int
-)
+data class GameSizes(
+    var windowWidth: Int = 0,
+    var windowHeight: Int = 0,
+    var worldWidth: Int = 0,
+    var worldHeight: Int = 0
+) {
+    fun windowWidthFloat(): Float = windowWidth.toFloat()
+    fun windowHeightFloat(): Float = windowHeight.toFloat()
+}
 
 fun generatePolygon(sides: Int, width: Int, height: Int): Polygon =
     generatePolygon(sides, width.toFloat(), height.toFloat())

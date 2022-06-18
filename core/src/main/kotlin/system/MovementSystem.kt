@@ -1,6 +1,6 @@
 package system
 
-import WorldSize
+import GameSizes
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Vector2
 import com.github.quillraven.fleks.ComponentMapper
@@ -11,7 +11,7 @@ import component.TransformComponent
 import kotlin.properties.Delegates
 
 class MovementSystem(
-    private val worldSize: WorldSize,
+    private val gameSizes: GameSizes,
     private val transform: ComponentMapper<TransformComponent>,
     private val render: ComponentMapper<RenderComponent>
 ) : IntervalSystem() {
@@ -61,8 +61,8 @@ class MovementSystem(
 
     private fun boundToWorld(position: Vector2, entityWidth: Float, entityHeight: Float) {
         if (position.x < 0f) position.x = 0f
-        if (position.x + entityWidth > worldSize.width) position.x = worldSize.width - entityWidth
+        if (position.x + entityWidth > gameSizes.worldWidth) position.x = gameSizes.worldWidth - entityWidth
         if (position.y < 0f) position.y = 0f
-        if (position.y + entityHeight > worldSize.height) position.y = worldSize.height - entityHeight
+        if (position.y + entityHeight > gameSizes.worldHeight) position.y = gameSizes.worldHeight - entityHeight
     }
 }

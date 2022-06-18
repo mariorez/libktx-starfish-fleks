@@ -19,8 +19,10 @@ import screen.GameScreen
 class GameBoot : KtxGame<KtxScreen>() {
 
     companion object {
-        const val WINDOW_WIDTH = 1920
-        const val WINDOW_HEIGHT = 1080
+        var gameSizes = GameSizes(
+            windowWidth = 1280,
+            windowHeight = 720
+        )
     }
 
     override fun create() {

@@ -1,6 +1,6 @@
 package system
 
-import WorldSize
+import GameSizes
 import com.badlogic.gdx.math.MathUtils.clamp
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.github.quillraven.fleks.ComponentMapper
@@ -11,7 +11,7 @@ import kotlin.properties.Delegates
 
 class CameraSystem(
     private val viewport: ExtendViewport,
-    private val worldSize: WorldSize,
+    private val gameSizes: GameSizes,
     private val transform: ComponentMapper<TransformComponent>,
 ) : IntervalSystem() {
 
@@ -21,8 +21,8 @@ class CameraSystem(
 
     override fun onTick() {
         transform[player].position.apply {
-            viewport.camera.position.x = clamp(x, middleWidth, worldSize.width - middleWidth)
-            viewport.camera.position.y = clamp(y, middleHeight, worldSize.height - middleHeight)
+            viewport.camera.position.x = clamp(x, middleWidth, gameSizes.worldWidth - middleWidth)
+            viewport.camera.position.y = clamp(y, middleHeight, gameSizes.worldHeight - middleHeight)
             viewport.camera.update()
         }
     }
