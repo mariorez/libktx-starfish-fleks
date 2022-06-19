@@ -39,6 +39,7 @@ import ktx.assets.disposeSafely
 import ktx.tiled.forEachMapObject
 import ktx.tiled.totalHeight
 import ktx.tiled.totalWidth
+import ktx.tiled.type
 import ktx.tiled.x
 import ktx.tiled.y
 import listener.ScoreListener
@@ -75,12 +76,12 @@ class GameScreen(
             inject(assets)
             system<InputSystem>()
             system<MovementSystem>()
-            system<CollisionSystem>()
             system<CameraSystem>()
             system<AnimationSystem>()
             system<RotateEffectSystem>()
             system<FadeEffectSystem>()
             system<RenderSystem>()
+            system<CollisionSystem>()
             familyListener<ScoreListener>()
         }
 
@@ -152,7 +153,7 @@ class GameScreen(
         ScoreListener.total = 0
 
         tiledMap.forEachMapObject("collision") { obj ->
-            when (obj.name) {
+            when (obj.type) {
                 "turtle" -> world.mapper<TransformComponent>()[turtle].apply {
                     position.set(obj.x, obj.y)
                     rotation = 0f
@@ -164,15 +165,15 @@ class GameScreen(
 
     private fun spawnEntities() {
         tiledMap.forEachMapObject("collision") { obj ->
-            when (obj.name) {
+            when (obj.type) {
                 "turtle" -> spawnPlayer(obj.x, obj.y)
                 "starfish" -> spawnStarfish(obj.x, obj.y)
                 else -> {
-                    val texture = assets.get<Texture>("${obj.name}.png")
+                    val texture = assets.get<Texture>("${obj.type}.png")
                     world.entity {
                         add<TransformComponent> { position.set(obj.x, obj.y) }
                         add<RenderComponent> { sprite = Sprite(texture) }
-                        when (obj.name) {
+                        when (obj.type) {
                             "rock" -> {
                                 add<RockComponent>()
                                 add<BoundingBoxComponent> {
