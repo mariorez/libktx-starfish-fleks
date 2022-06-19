@@ -17,7 +17,7 @@ abstract class BaseScreen(
     protected val camera = OrthographicCamera().apply {
         setToOrtho(false, gameSizes.windowWidthFloat(), gameSizes.windowHeightFloat())
     }
-    protected val uiStage = Stage(FitViewport(gameSizes.windowWidthFloat(), gameSizes.windowHeightFloat()))
+    protected val hudStage = Stage(FitViewport(gameSizes.windowWidthFloat(), gameSizes.windowHeightFloat()))
 
     fun registerAction(inputKey: Int, actionName: Action.Name) {
         actionMap[inputKey] = actionName
@@ -29,18 +29,18 @@ abstract class BaseScreen(
 
     override fun show() {
         (Gdx.input.inputProcessor as InputMultiplexer).apply {
-            addProcessor(uiStage)
+            addProcessor(hudStage)
         }
     }
 
     override fun hide() {
         (Gdx.input.inputProcessor as InputMultiplexer).apply {
-            removeProcessor(uiStage)
+            removeProcessor(hudStage)
         }
     }
 
     override fun dispose() {
-        uiStage.disposeSafely()
+        hudStage.disposeSafely()
         batch.disposeSafely()
     }
 }

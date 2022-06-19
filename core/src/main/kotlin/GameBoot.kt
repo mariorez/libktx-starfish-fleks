@@ -11,6 +11,7 @@ import ktx.app.KtxInputAdapter
 import ktx.app.KtxScreen
 import ktx.app.Platform
 import ktx.assets.async.AssetStorage
+import ktx.assets.disposeSafely
 import ktx.async.KtxAsync
 import screen.GameScreen
 
@@ -22,6 +23,8 @@ class GameBoot : KtxGame<KtxScreen>() {
             windowHeight = 540
         )
     }
+
+    private val assets = AssetStorage()
 
     override fun create() {
         Gdx.app.logLevel = LOG_DEBUG
@@ -45,7 +48,7 @@ class GameBoot : KtxGame<KtxScreen>() {
 
         KtxAsync.initiate()
 
-        val assets = AssetStorage().apply {
+        assets.apply {
             setLoader<TiledMap> { TmxMapLoader(fileResolver) }
             loadSync<TiledMap>("map.tmx")
             loadSync<TextureAtlas>("starfish-collector.atlas").apply {
@@ -63,5 +66,10 @@ class GameBoot : KtxGame<KtxScreen>() {
 
         addScreen(GameScreen(this, assets))
         setScreen<GameScreen>()
+    }
+
+    override fun dispose() {
+        super.dispose()
+        assets.disposeSafely()
     }
 }

@@ -5,15 +5,13 @@
  </tileset>
  <tileset firstgid="5" name="starfish" tilewidth="60" tileheight="53" tilecount="1" columns="1">
   <image source="starfish.png" width="60" height="53"/>
-  <tile id="0" name="starfish"/>
  </tileset>
  <tileset firstgid="6" name="rock" tilewidth="64" tileheight="64" tilecount="1" columns="1">
   <image source="rock.png" width="64" height="64"/>
-  <tile id="0" name="rock"/>
  </tileset>
  <tileset firstgid="7" name="sign" tilewidth="64" tileheight="64" tilecount="1" columns="1">
   <image source="sign.png" width="64" height="64"/>
-  <tile id="0" name="sign">
+  <tile id="0">
    <properties>
     <property name="message" value="Hello, world!"/>
    </properties>
@@ -84,7 +82,7 @@
   <object id="23" name="starfish" gid="5" x="896" y="864" width="60" height="53"/>
   <object id="24" name="starfish" gid="5" x="480" y="640" width="60" height="53"/>
   <object id="25" name="starfish" gid="5" x="160" y="576" width="60" height="53"/>
-  <object id="26" name="starfish" gid="5" x="64" y="736" width="60" height="53"/>
+  <object id="26" name="starfish" gid="5" x="56.5697" y="371.913" width="60" height="53"/>
   <object id="27" name="sign" gid="7" x="928" y="160" width="64" height="64">
    <properties>
     <property name="message" value="It's the end of world!"/>
@@ -95,6 +93,6 @@
     <property name="message" value="Collect all the Starfish"/>
    </properties>
   </object>
-  <object id="31" name="turtle" x="82.0124" y="812.693" width="30" height="30"/>
+  <object id="31" name="turtle" x="52.291" y="768.111" width="30" height="30"/>
  </objectgroup>
 </map>

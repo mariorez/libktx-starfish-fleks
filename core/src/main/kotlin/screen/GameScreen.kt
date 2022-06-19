@@ -41,7 +41,7 @@ import ktx.tiled.totalHeight
 import ktx.tiled.totalWidth
 import ktx.tiled.x
 import ktx.tiled.y
-import listener.StarfishCounterListener
+import listener.ScoreListener
 import system.AnimationSystem
 import system.CameraSystem
 import system.CollisionSystem
@@ -56,41 +56,37 @@ class GameScreen(
     gameBoot: GameBoot,
     private val assets: AssetStorage,
 ) : BaseScreen(gameBoot) {
+    private var world: World
+    private var turtle: Entity by Delegates.notNull()
     private val tiledMap = assets.get<TiledMap>("map.tmx")
     private val mapRenderer = OrthoCachedTiledMapRenderer(tiledMap).apply { setBlending(true) }
-    private var turtle: Entity by Delegates.notNull()
-    private var starFishScore = Label("", Label.LabelStyle().apply { font = generateFont() })
+    private var score = Label("", Label.LabelStyle().apply { font = generateFont() })
     private lateinit var touchpad: Touchpad
-    private val world = World {
-        inject(batch)
-        inject(camera)
-        inject(mapRenderer)
-        inject(gameSizes)
-        inject(assets)
-        system<InputSystem>()
-        system<MovementSystem>()
-        system<CollisionSystem>()
-        system<CameraSystem>()
-        system<AnimationSystem>()
-        system<RotateEffectSystem>()
-        system<FadeEffectSystem>()
-        system<RenderSystem>()
-        familyListener<StarfishCounterListener>()
-    }
 
     init {
         gameSizes.worldWidth = tiledMap.totalWidth()
         gameSizes.worldHeight = tiledMap.totalHeight()
 
-        if (Platform.isDesktop) {
-            registerAction(Input.Keys.UP, Action.Name.UP)
-            registerAction(Input.Keys.DOWN, Action.Name.DOWN)
-            registerAction(Input.Keys.LEFT, Action.Name.LEFT)
-            registerAction(Input.Keys.RIGHT, Action.Name.RIGHT)
+        world = World {
+            inject(batch)
+            inject(camera)
+            inject(mapRenderer)
+            inject(gameSizes)
+            inject(assets)
+            system<InputSystem>()
+            system<MovementSystem>()
+            system<CollisionSystem>()
+            system<CameraSystem>()
+            system<AnimationSystem>()
+            system<RotateEffectSystem>()
+            system<FadeEffectSystem>()
+            system<RenderSystem>()
+            familyListener<ScoreListener>()
         }
 
-        buildUI()
-        spawnObjects()
+        buildHud()
+        buildControls()
+        spawnEntities()
 
         // late injections
         world.apply {
@@ -104,72 +100,93 @@ class GameScreen(
         }
     }
 
-    private fun buildUI() {
+    override fun render(delta: Float) {
+        score.setText("Starfish Left: ${ScoreListener.total}")
+        world.update(delta)
+        hudStage.draw()
+    }
+
+    override fun dispose() {
+        super.dispose()
+        world.dispose()
+        mapRenderer.disposeSafely()
+        tiledMap.disposeSafely()
+    }
+
+    private fun buildHud() {
         val restartButton = generateButton(assets["undo.png"]).apply {
-            onTouchDown {
-                StarfishCounterListener.counter = 0
-                gameBoot.apply {
-                    removeScreen<GameScreen>()
-                    addScreen(GameScreen(gameBoot, assets))
-                    setScreen<GameScreen>()
-                }
-            }
+            onTouchDown { restart() }
         }
 
-        uiStage.addActor(Table().apply {
+        hudStage.addActor(Table().apply {
             setFillParent(true)
             pad(5f)
-            add(starFishScore).expandX().expandY().left().top()
+            add(score).expandX().expandY().left().top()
             add(restartButton).top()
         })
+    }
 
+    private fun buildControls() {
         if (Platform.isMobile) {
             touchpad = Touchpad(5f, Touchpad.TouchpadStyle().apply {
                 background = TextureRegionDrawable(TextureRegion(TextureRegion(assets.get<Texture>("touchpad-bg.png"))))
                 knob = TextureRegionDrawable(TextureRegion(assets.get<Texture>("touchpad-knob.png")))
             })
 
-            uiStage.addActor(Table().apply {
+            hudStage.addActor(Table().apply {
                 setFillParent(true)
                 add(touchpad).expandY().expandX().left().bottom()
             })
+        } else {
+            registerAction(Input.Keys.UP, Action.Name.UP)
+            registerAction(Input.Keys.DOWN, Action.Name.DOWN)
+            registerAction(Input.Keys.LEFT, Action.Name.LEFT)
+            registerAction(Input.Keys.RIGHT, Action.Name.RIGHT)
         }
     }
 
-    private fun spawnObjects() {
+    private fun restart() {
+        world.family(arrayOf(StarfishComponent::class))
+            .forEach { world.remove(it) }
+
+        ScoreListener.total = 0
+
         tiledMap.forEachMapObject("collision") { obj ->
-            if (obj.name == "turtle") {
-                spawnPlayer(obj.x, obj.y)
-            } else {
-                val texture = assets.get<Texture>("${obj.name}.png")
-                world.entity {
-                    add<TransformComponent> { position.set(obj.x, obj.y) }
-                    add<RenderComponent> { sprite = Sprite(texture) }
-                    when (obj.name) {
-                        "rock" -> {
-                            add<RockComponent>()
-                            add<BoundingBoxComponent> {
-                                polygon = generatePolygon(8, texture.width, texture.height).apply {
-                                    setPosition(obj.x, obj.y)
+            when (obj.name) {
+                "turtle" -> world.mapper<TransformComponent>()[turtle].apply {
+                    position.set(obj.x, obj.y)
+                    rotation = 0f
+                }
+                "starfish" -> spawnStarfish(obj.x, obj.y)
+            }
+        }
+    }
+
+    private fun spawnEntities() {
+        tiledMap.forEachMapObject("collision") { obj ->
+            when (obj.name) {
+                "turtle" -> spawnPlayer(obj.x, obj.y)
+                "starfish" -> spawnStarfish(obj.x, obj.y)
+                else -> {
+                    val texture = assets.get<Texture>("${obj.name}.png")
+                    world.entity {
+                        add<TransformComponent> { position.set(obj.x, obj.y) }
+                        add<RenderComponent> { sprite = Sprite(texture) }
+                        when (obj.name) {
+                            "rock" -> {
+                                add<RockComponent>()
+                                add<BoundingBoxComponent> {
+                                    polygon = generatePolygon(8, texture.width, texture.height).apply {
+                                        setPosition(obj.x, obj.y)
+                                    }
                                 }
                             }
-                        }
-
-                        "starfish" -> {
-                            add<StarfishComponent>()
-                            add<RotateEffectComponent> { speed = 1f }
-                            add<BoundingBoxComponent> {
-                                polygon = generatePolygon(8, texture.width, texture.height).apply {
-                                    setPosition(obj.x, obj.y)
-                                }
-                            }
-                        }
-
-                        "sign" -> {
-                            add<SignComponent>()
-                            add<BoundingBoxComponent> {
-                                polygon = generateRectangle(texture.width, texture.height).apply {
-                                    setPosition(obj.x, obj.y)
+                            "sign" -> {
+                                add<SignComponent>()
+                                add<BoundingBoxComponent> {
+                                    polygon = generateRectangle(texture.width, texture.height).apply {
+                                        setPosition(obj.x, obj.y)
+                                    }
                                 }
                             }
                         }
@@ -205,6 +222,21 @@ class GameScreen(
         }
     }
 
+    private fun spawnStarfish(x: Float, y: Float) {
+        val texture = assets.get<Texture>("starfish.png")
+        world.entity {
+            add<TransformComponent> { position.set(x, y) }
+            add<RenderComponent> { sprite = Sprite(texture) }
+            add<StarfishComponent>()
+            add<RotateEffectComponent> { speed = 1f }
+            add<BoundingBoxComponent> {
+                polygon = generatePolygon(8, texture.width, texture.height).apply {
+                    setPosition(x, y)
+                }
+            }
+        }
+    }
+
     override fun doAction(action: Action) {
         val input = world.mapper<InputComponent>()[turtle]
         val isStarting = action.type == START
@@ -214,19 +246,5 @@ class GameScreen(
             Action.Name.LEFT -> input.left = isStarting
             Action.Name.RIGHT -> input.right = isStarting
         }
-    }
-
-    override fun render(delta: Float) {
-        starFishScore.setText("Starfish Left: ${StarfishCounterListener.counter}")
-        world.update(delta)
-        uiStage.draw()
-    }
-
-    override fun dispose() {
-        super.dispose()
-        world.dispose()
-        mapRenderer.disposeSafely()
-        tiledMap.disposeSafely()
-        assets.disposeSafely()
     }
 }

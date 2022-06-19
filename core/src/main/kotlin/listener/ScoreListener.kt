@@ -6,17 +6,17 @@ import com.github.quillraven.fleks.FamilyListener
 import component.StarfishComponent
 
 @AllOf([StarfishComponent::class])
-class StarfishCounterListener : FamilyListener {
+class ScoreListener : FamilyListener {
 
     companion object {
-        var counter = 0
+        var total = 0
     }
 
     override fun onEntityAdded(entity: Entity) {
-        counter++
+        total++
     }
 
     override fun onEntityRemoved(entity: Entity) {
-        counter--
+        total--
     }
 }
