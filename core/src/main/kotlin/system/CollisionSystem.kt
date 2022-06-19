@@ -1,5 +1,6 @@
 package system
 
+import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Intersector
 import com.badlogic.gdx.math.Intersector.MinimumTranslationVector
@@ -79,6 +80,7 @@ class CollisionSystem(
                     frameDuration = 0.1f
                 }
             }
+            assets.get<Sound>("water-drop.ogg").play()
         }
     }
 

@@ -43,8 +43,8 @@ fun generateRectangle(width: Float, height: Float): Polygon {
     return Polygon(floatArrayOf(0f, 0f, width, 0f, width, height, 0f, height))
 }
 
-fun generateFont(): BitmapFont {
-    return FreeTypeFontGenerator(Gdx.files.internal("OpenSans.ttf"))
+fun generateFont(fontFile: String = "open-sans.ttf"): BitmapFont {
+    return FreeTypeFontGenerator(Gdx.files.internal(fontFile))
         .generateFont(
             FreeTypeFontGenerator.FreeTypeFontParameter().apply {
                 size = 34

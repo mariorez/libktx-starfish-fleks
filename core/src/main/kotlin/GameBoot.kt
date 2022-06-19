@@ -1,6 +1,8 @@
 import com.badlogic.gdx.Application.LOG_DEBUG
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
+import com.badlogic.gdx.assets.loaders.SoundLoader
+import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.Texture.TextureFilter.Linear
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
@@ -51,6 +53,7 @@ class GameBoot : KtxGame<KtxScreen>() {
 
         assets.apply {
             setLoader<TiledMap> { TmxMapLoader(fileResolver) }
+            setLoader<Sound> { SoundLoader(fileResolver) }
             loadSync<TiledMap>("map.tmx")
             loadSync<TextureAtlas>("starfish-collector.atlas").apply {
                 textures.forEach { it.setFilter(Linear, Linear) }
@@ -62,6 +65,7 @@ class GameBoot : KtxGame<KtxScreen>() {
             loadSync<Texture>("rock.png").setFilter(Linear, Linear)
             loadSync<Texture>("sign.png").setFilter(Linear, Linear)
             loadSync<Texture>("undo.png").setFilter(Linear, Linear)
+            loadSync<Sound>("water-drop.ogg")
             if (Platform.isMobile) {
                 loadSync<Texture>("touchpad-bg.png").setFilter(Linear, Linear)
                 loadSync<Texture>("touchpad-knob.png").setFilter(Linear, Linear)
