@@ -14,6 +14,7 @@ import ktx.assets.async.AssetStorage
 import ktx.assets.disposeSafely
 import ktx.async.KtxAsync
 import screen.GameScreen
+import screen.MenuScreen
 
 class GameBoot : KtxGame<KtxScreen>() {
 
@@ -54,6 +55,9 @@ class GameBoot : KtxGame<KtxScreen>() {
             loadSync<TextureAtlas>("starfish-collector.atlas").apply {
                 textures.forEach { it.setFilter(Linear, Linear) }
             }
+            loadSync<Texture>("water.jpg").setFilter(Linear, Linear)
+            loadSync<Texture>("button.png").setFilter(Linear, Linear)
+            loadSync<Texture>("game-title.png").setFilter(Linear, Linear)
             loadSync<Texture>("starfish.png").setFilter(Linear, Linear)
             loadSync<Texture>("rock.png").setFilter(Linear, Linear)
             loadSync<Texture>("sign.png").setFilter(Linear, Linear)
@@ -65,7 +69,8 @@ class GameBoot : KtxGame<KtxScreen>() {
         }
 
         addScreen(GameScreen(this, assets))
-        setScreen<GameScreen>()
+        addScreen(MenuScreen(this, assets))
+        setScreen<MenuScreen>()
     }
 
     override fun dispose() {
