@@ -10,23 +10,16 @@ import ktx.app.KtxScreen
 import ktx.app.Platform
 import ktx.assets.disposeSafely
 
-abstract class BaseScreen : KtxScreen {
+abstract class BaseScreen(
+    protected val gameBoot: GameBoot
+) : KtxScreen {
 
     private val actionMap = mutableMapOf<Int, Action.Name>()
     protected val batch = SpriteBatch()
     protected val camera = OrthographicCamera().apply {
-        setToOrtho(
-            false,
-            gameSizes.windowWidthFloat(),
-            gameSizes.windowHeightFloat()
-        )
+        setToOrtho(false, gameSizes.windowWidthFloat(), gameSizes.windowHeightFloat())
     }
-    protected val uiStage = Stage(
-        FitViewport(
-            gameSizes.windowWidthFloat(),
-            gameSizes.windowHeightFloat()
-        )
-    )
+    protected val uiStage = Stage(FitViewport(gameSizes.windowWidthFloat(), gameSizes.windowHeightFloat()))
 
     init {
         Gdx.input.inputProcessor = if (Platform.isMobile) InputMultiplexer().apply { addProcessor(uiStage) }
@@ -57,5 +50,6 @@ abstract class BaseScreen : KtxScreen {
 
     override fun dispose() {
         uiStage.disposeSafely()
+        batch.disposeSafely()
     }
 }

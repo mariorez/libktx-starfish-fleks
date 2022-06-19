@@ -1,14 +1,10 @@
 import com.badlogic.gdx.Application.LOG_DEBUG
 import com.badlogic.gdx.Gdx
-import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.Texture.TextureFilter.Linear
-import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
-import com.badlogic.gdx.scenes.scene2d.ui.Label
 import ktx.app.KtxGame
 import ktx.app.KtxScreen
 import ktx.app.Platform
@@ -39,29 +35,14 @@ class GameBoot : KtxGame<KtxScreen>() {
             loadSync<Texture>("starfish.png").setFilter(Linear, Linear)
             loadSync<Texture>("rock.png").setFilter(Linear, Linear)
             loadSync<Texture>("sign.png").setFilter(Linear, Linear)
+            loadSync<Texture>("undo.png").setFilter(Linear, Linear)
             if (Platform.isMobile) {
                 loadSync<Texture>("touchpad-bg.png").setFilter(Linear, Linear)
                 loadSync<Texture>("touchpad-knob.png").setFilter(Linear, Linear)
             }
         }
 
-        val labelStyle = Label.LabelStyle().apply { font = fontGenerator() }
-
-        addScreen(GameScreen(assets, labelStyle))
+        addScreen(GameScreen(this, assets))
         setScreen<GameScreen>()
-    }
-
-    private fun fontGenerator(): BitmapFont {
-        return FreeTypeFontGenerator(Gdx.files.internal("OpenSans.ttf"))
-            .generateFont(
-                FreeTypeFontGenerator.FreeTypeFontParameter().apply {
-                    size = 34
-                    color = Color.WHITE
-                    borderColor = Color.BLACK
-                    borderWidth = 2f
-                    borderStraight = true
-                    minFilter = Linear
-                    magFilter = Linear
-                })
     }
 }

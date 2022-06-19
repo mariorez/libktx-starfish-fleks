@@ -3,6 +3,7 @@ package screen
 import Action
 import Action.Type.START
 import BaseScreen
+import GameBoot
 import GameBoot.Companion.gameSizes
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Texture
@@ -27,8 +28,11 @@ import component.RotateEffectComponent
 import component.SignComponent
 import component.StarfishComponent
 import component.TransformComponent
+import generateFont
+import generateButton
 import generatePolygon
 import generateRectangle
+import ktx.actors.onTouchDown
 import ktx.app.Platform
 import ktx.assets.async.AssetStorage
 import ktx.assets.disposeSafely
@@ -49,15 +53,14 @@ import system.RotateEffectSystem
 import kotlin.properties.Delegates
 
 class GameScreen(
+    gameBoot: GameBoot,
     private val assets: AssetStorage,
-    labelStyle: Label.LabelStyle
-) : BaseScreen() {
+) : BaseScreen(gameBoot) {
     private val tiledMap = assets.get<TiledMap>("map.tmx")
     private val mapRenderer = OrthoCachedTiledMapRenderer(tiledMap).apply { setBlending(true) }
     private var turtle: Entity by Delegates.notNull()
-    private var starFishLabel = Label("", labelStyle)
+    private var starFishScore = Label("", Label.LabelStyle().apply { font = generateFont() })
     private lateinit var touchpad: Touchpad
-    private lateinit var counter: StarfishCounterListener
     private val world = World {
         inject(batch)
         inject(camera)
@@ -88,10 +91,22 @@ class GameScreen(
             registerAction(Input.Keys.RIGHT, Action.Name.RIGHT)
         }
 
+        val restart = generateButton(assets["undo.png"]).apply {
+            onTouchDown {
+                StarfishCounterListener.counter = 0
+                gameBoot.apply {
+                    removeScreen<GameScreen>()
+                    addScreen(GameScreen(gameBoot, assets))
+                    setScreen<GameScreen>()
+                }
+            }
+        }
+
         uiStage.addActor(Table().apply {
             setFillParent(true)
             pad(5f)
-            add(starFishLabel).expandX().expandY().left().top()
+            add(starFishScore).expandX().expandY().left().top()
+            add(restart).top()
         })
 
         spawnObjects()
@@ -203,17 +218,16 @@ class GameScreen(
     }
 
     override fun render(delta: Float) {
+        starFishScore.setText("Starfish Left: ${StarfishCounterListener.counter}")
         world.update(delta)
-        starFishLabel.setText("Starfish Left: ${StarfishCounterListener.counter}")
         uiStage.draw()
     }
 
     override fun dispose() {
         super.dispose()
         world.dispose()
-        batch.disposeSafely()
-        assets.disposeSafely()
         mapRenderer.disposeSafely()
         tiledMap.disposeSafely()
+        assets.disposeSafely()
     }
 }

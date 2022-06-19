@@ -1,5 +1,13 @@
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Color
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.BitmapFont
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.math.MathUtils
 import com.badlogic.gdx.math.Polygon
+import com.badlogic.gdx.scenes.scene2d.ui.Button
+import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 
 data class GameSizes(
     var windowWidth: Int = 0,
@@ -29,4 +37,24 @@ fun generatePolygon(sides: Int, width: Float, height: Float): Polygon {
 fun generateRectangle(width: Int, height: Int): Polygon = generateRectangle(width.toFloat(), height.toFloat())
 fun generateRectangle(width: Float, height: Float): Polygon {
     return Polygon(floatArrayOf(0f, 0f, width, 0f, width, height, 0f, height))
+}
+
+fun generateFont(): BitmapFont {
+    return FreeTypeFontGenerator(Gdx.files.internal("OpenSans.ttf"))
+        .generateFont(
+            FreeTypeFontGenerator.FreeTypeFontParameter().apply {
+                size = 34
+                color = Color.WHITE
+                borderColor = Color.BLACK
+                borderWidth = 2f
+                borderStraight = true
+                minFilter = Texture.TextureFilter.Linear
+                magFilter = Texture.TextureFilter.Linear
+            })
+}
+
+fun generateButton(texture: Texture): Button {
+    return Button(ButtonStyle().apply {
+        up = TextureRegionDrawable(texture)
+    })
 }
