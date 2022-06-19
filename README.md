@@ -8,18 +8,25 @@ Controls
 
 ![alt text](starfishcollector-screeshot.png "Starfish Collector")
 
-## Running local
+## How to run the desktop version
 
-Desktop version
+Running the source code:
+
 ```
 ./gradlew lwjgl3:run
 ```
 
-## Setup
+Running the `jar` file:
 
-- **Kotlin** 1.6.21
-- **JVM** 11
-- **Gradle** Wrapper 7.4.2
+```
+java -jar starfishcollector-{version}.jar
+```
+
+## Technologies used
+
+- **Kotlin** 1.6.21: https://kotlinlang.org
+- **JVM** 11: https://www.java.com
+- **Gradle** Wrapper 7.4.2: https://gradle.org
 - **LigKTX** 11.11.0-rc1: https://libktx.github.io
 - **LigGDX** 1.11.0: https://libgdx.com
 - **Fleks ECS Library** 1.3-JVM: https://github.com/Quillraven/Fleks
