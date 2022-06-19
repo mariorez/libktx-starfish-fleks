@@ -5,9 +5,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.utils.viewport.FitViewport
-import ktx.app.KtxInputAdapter
 import ktx.app.KtxScreen
-import ktx.app.Platform
 import ktx.assets.disposeSafely
 
 abstract class BaseScreen(
@@ -21,25 +19,6 @@ abstract class BaseScreen(
     }
     protected val uiStage = Stage(FitViewport(gameSizes.windowWidthFloat(), gameSizes.windowHeightFloat()))
 
-    init {
-        Gdx.input.inputProcessor = if (Platform.isMobile) InputMultiplexer().apply { addProcessor(uiStage) }
-        else InputMultiplexer(object : KtxInputAdapter {
-            override fun keyDown(keycode: Int): Boolean {
-                this.apply {
-                    getActionMap()[keycode]?.let { doAction(Action(it, Action.Type.START)) }
-                }
-                return super.keyDown(keycode)
-            }
-
-            override fun keyUp(keycode: Int): Boolean {
-                this.apply {
-                    getActionMap()[keycode]?.let { doAction(Action(it, Action.Type.END)) }
-                }
-                return super.keyUp(keycode)
-            }
-        })
-    }
-
     fun registerAction(inputKey: Int, actionName: Action.Name) {
         actionMap[inputKey] = actionName
     }
@@ -47,6 +26,18 @@ abstract class BaseScreen(
     fun getActionMap(): MutableMap<Int, Action.Name> = actionMap
 
     abstract fun doAction(action: Action)
+
+    override fun show() {
+        (Gdx.input.inputProcessor as InputMultiplexer).apply {
+            addProcessor(uiStage)
+        }
+    }
+
+    override fun hide() {
+        (Gdx.input.inputProcessor as InputMultiplexer).apply {
+            removeProcessor(uiStage)
+        }
+    }
 
     override fun dispose() {
         uiStage.disposeSafely()

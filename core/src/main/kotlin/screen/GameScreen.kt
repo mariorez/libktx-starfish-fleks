@@ -28,8 +28,8 @@ import component.RotateEffectComponent
 import component.SignComponent
 import component.StarfishComponent
 import component.TransformComponent
-import generateFont
 import generateButton
+import generateFont
 import generatePolygon
 import generateRectangle
 import ktx.actors.onTouchDown
@@ -82,33 +82,14 @@ class GameScreen(
         gameSizes.worldWidth = tiledMap.totalWidth()
         gameSizes.worldHeight = tiledMap.totalHeight()
 
-        if (Platform.isMobile) {
-            buildTouchpad()
-        } else {
+        if (Platform.isDesktop) {
             registerAction(Input.Keys.UP, Action.Name.UP)
             registerAction(Input.Keys.DOWN, Action.Name.DOWN)
             registerAction(Input.Keys.LEFT, Action.Name.LEFT)
             registerAction(Input.Keys.RIGHT, Action.Name.RIGHT)
         }
 
-        val restart = generateButton(assets["undo.png"]).apply {
-            onTouchDown {
-                StarfishCounterListener.counter = 0
-                gameBoot.apply {
-                    removeScreen<GameScreen>()
-                    addScreen(GameScreen(gameBoot, assets))
-                    setScreen<GameScreen>()
-                }
-            }
-        }
-
-        uiStage.addActor(Table().apply {
-            setFillParent(true)
-            pad(5f)
-            add(starFishScore).expandX().expandY().left().top()
-            add(restart).top()
-        })
-
+        buildUI()
         spawnObjects()
 
         // late injections
@@ -123,31 +104,35 @@ class GameScreen(
         }
     }
 
-    private fun spawnPlayer(x: Float, y: Float) {
-        turtle = world.entity {
-            add<PlayerComponent>()
-            add<InputComponent>()
-            add<RenderComponent>()
-            add<TransformComponent> {
-                position.set(x, y)
-                zIndex = 1f
-                acceleration = 400f
-                deceleration = 250f
-                maxSpeed = 150f
-            }
-            add<AnimationComponent> {
-                region = assets
-                    .get<TextureAtlas>("starfish-collector.atlas")
-                    .findRegion("turtle")
-                frames = 6
-                frameDuration = 0.1f
-            }.apply {
-                add<BoundingBoxComponent> {
-                    val width = (region.regionWidth / frames)
-                    val height = region.regionHeight
-                    polygon = generatePolygon(8, width, height)
+    private fun buildUI() {
+        val restartButton = generateButton(assets["undo.png"]).apply {
+            onTouchDown {
+                StarfishCounterListener.counter = 0
+                gameBoot.apply {
+                    removeScreen<GameScreen>()
+                    addScreen(GameScreen(gameBoot, assets))
+                    setScreen<GameScreen>()
                 }
             }
+        }
+
+        uiStage.addActor(Table().apply {
+            setFillParent(true)
+            pad(5f)
+            add(starFishScore).expandX().expandY().left().top()
+            add(restartButton).top()
+        })
+
+        if (Platform.isMobile) {
+            touchpad = Touchpad(5f, Touchpad.TouchpadStyle().apply {
+                background = TextureRegionDrawable(TextureRegion(TextureRegion(assets.get<Texture>("touchpad-bg.png"))))
+                knob = TextureRegionDrawable(TextureRegion(assets.get<Texture>("touchpad-knob.png")))
+            })
+
+            uiStage.addActor(Table().apply {
+                setFillParent(true)
+                add(touchpad).expandY().expandX().left().bottom()
+            })
         }
     }
 
@@ -194,16 +179,30 @@ class GameScreen(
         }
     }
 
-    private fun buildTouchpad() {
-        touchpad = Touchpad(5f, Touchpad.TouchpadStyle().apply {
-            background = TextureRegionDrawable(TextureRegion(TextureRegion(assets.get<Texture>("touchpad-bg.png"))))
-            knob = TextureRegionDrawable(TextureRegion(assets.get<Texture>("touchpad-knob.png")))
-        })
-
-        uiStage.addActor(Table().apply {
-            setFillParent(true)
-            add(touchpad).expandY().expandX().left().bottom()
-        })
+    private fun spawnPlayer(x: Float, y: Float) {
+        turtle = world.entity {
+            add<PlayerComponent>()
+            add<InputComponent>()
+            add<RenderComponent>()
+            add<TransformComponent> {
+                position.set(x, y)
+                zIndex = 1f
+                acceleration = 400f
+                deceleration = 250f
+                maxSpeed = 150f
+            }
+            add<AnimationComponent> {
+                region = assets.get<TextureAtlas>("starfish-collector.atlas").findRegion("turtle")
+                frames = 6
+                frameDuration = 0.1f
+            }.apply {
+                add<BoundingBoxComponent> {
+                    val width = (region.regionWidth / frames)
+                    val height = region.regionHeight
+                    polygon = generatePolygon(8, width, height)
+                }
+            }
+        }
     }
 
     override fun doAction(action: Action) {

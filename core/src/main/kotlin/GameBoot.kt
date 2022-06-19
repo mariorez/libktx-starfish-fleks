@@ -1,11 +1,13 @@
 import com.badlogic.gdx.Application.LOG_DEBUG
 import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.Texture.TextureFilter.Linear
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import ktx.app.KtxGame
+import ktx.app.KtxInputAdapter
 import ktx.app.KtxScreen
 import ktx.app.Platform
 import ktx.assets.async.AssetStorage
@@ -23,6 +25,23 @@ class GameBoot : KtxGame<KtxScreen>() {
 
     override fun create() {
         Gdx.app.logLevel = LOG_DEBUG
+
+        Gdx.input.inputProcessor = if (Platform.isMobile) InputMultiplexer()
+        else InputMultiplexer(object : KtxInputAdapter {
+            override fun keyDown(keycode: Int): Boolean {
+                (currentScreen as BaseScreen).apply {
+                    getActionMap()[keycode]?.let { doAction(Action(it, Action.Type.START)) }
+                }
+                return super.keyDown(keycode)
+            }
+
+            override fun keyUp(keycode: Int): Boolean {
+                (currentScreen as BaseScreen).apply {
+                    getActionMap()[keycode]?.let { doAction(Action(it, Action.Type.END)) }
+                }
+                return super.keyUp(keycode)
+            }
+        })
 
         KtxAsync.initiate()
 
