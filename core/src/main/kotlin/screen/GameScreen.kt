@@ -56,34 +56,32 @@ import kotlin.properties.Delegates
 class GameScreen(
     private val assets: AssetStorage,
 ) : BaseScreen() {
-    private var world: World
-    private var turtle: Entity by Delegates.notNull()
     private val tiledMap = assets.get<TiledMap>("map.tmx")
     private val mapRenderer = OrthoCachedTiledMapRenderer(tiledMap).apply { setBlending(true) }
     private var score = ScoreManager()
     private var scoreLabel = Label("", LabelStyle().apply { font = generateFont() })
     private lateinit var touchpad: Touchpad
+    private var turtle: Entity by Delegates.notNull()
+    private var world = World {
+        inject(batch)
+        inject(camera)
+        inject(mapRenderer)
+        inject(gameSizes)
+        inject(assets)
+        inject(score)
+        system<InputSystem>()
+        system<MovementSystem>()
+        system<CameraSystem>()
+        system<AnimationSystem>()
+        system<RotateEffectSystem>()
+        system<FadeEffectSystem>()
+        system<RenderSystem>()
+        system<CollisionSystem>()
+    }
 
     init {
         gameSizes.worldWidth = tiledMap.totalWidth()
         gameSizes.worldHeight = tiledMap.totalHeight()
-
-        world = World {
-            inject(batch)
-            inject(camera)
-            inject(mapRenderer)
-            inject(gameSizes)
-            inject(assets)
-            inject(score)
-            system<InputSystem>()
-            system<MovementSystem>()
-            system<CameraSystem>()
-            system<AnimationSystem>()
-            system<RotateEffectSystem>()
-            system<FadeEffectSystem>()
-            system<RenderSystem>()
-            system<CollisionSystem>()
-        }
 
         buildHud()
         buildControls()
