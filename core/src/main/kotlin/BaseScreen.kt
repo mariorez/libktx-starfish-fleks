@@ -8,16 +8,14 @@ import com.badlogic.gdx.utils.viewport.FitViewport
 import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
 
-abstract class BaseScreen(
-    protected val gameBoot: GameBoot
-) : KtxScreen {
+abstract class BaseScreen : KtxScreen {
 
     private val actionMap = mutableMapOf<Int, Action.Name>()
     protected val batch = SpriteBatch()
     protected val camera = OrthographicCamera().apply {
-        setToOrtho(false, gameSizes.windowWidthFloat(), gameSizes.windowHeightFloat())
+        setToOrtho(false, gameSizes.windowWidthF(), gameSizes.windowHeightF())
     }
-    protected val hudStage = Stage(FitViewport(gameSizes.windowWidthFloat(), gameSizes.windowHeightFloat()))
+    protected val hudStage = Stage(FitViewport(gameSizes.windowWidthF(), gameSizes.windowHeightF()))
 
     fun registerAction(inputKey: Int, actionName: Action.Name) {
         actionMap[inputKey] = actionName

@@ -14,13 +14,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 
 data class GameSizes(
-    var windowWidth: Int = 0,
-    var windowHeight: Int = 0,
-    var worldWidth: Int = 0,
-    var worldHeight: Int = 0
+    var windowWidth: Int,
+    var windowHeight: Int,
+    var worldWidth: Int = windowWidth,
+    var worldHeight: Int = windowHeight
 ) {
-    fun windowWidthFloat(): Float = windowWidth.toFloat()
-    fun windowHeightFloat(): Float = windowHeight.toFloat()
+    fun windowWidthF(): Float = windowWidth.toFloat()
+    fun windowHeightF(): Float = windowHeight.toFloat()
 }
 
 fun generatePolygon(sides: Int, width: Int, height: Int): Polygon =

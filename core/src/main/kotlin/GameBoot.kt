@@ -72,8 +72,8 @@ class GameBoot : KtxGame<KtxScreen>() {
             }
         }
 
-        addScreen(GameScreen(this, assets))
         addScreen(MenuScreen(this, assets))
+        addScreen(GameScreen(assets))
         setScreen<MenuScreen>()
     }
 

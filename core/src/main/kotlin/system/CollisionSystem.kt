@@ -20,12 +20,14 @@ import component.SignComponent
 import component.StarfishComponent
 import component.TransformComponent
 import ktx.assets.async.AssetStorage
+import listener.ScoreManager
 import kotlin.properties.Delegates
 
 @AllOf([BoundingBoxComponent::class])
 @NoneOf([PlayerComponent::class])
 class CollisionSystem(
     private val assets: AssetStorage,
+    private val score: ScoreManager,
     private val transform: ComponentMapper<TransformComponent>,
     private val box: ComponentMapper<BoundingBoxComponent>,
     private val render: ComponentMapper<RenderComponent>,
@@ -61,6 +63,8 @@ class CollisionSystem(
         }
 
         if (starfish.contains(entity)) {
+            score.total--
+            assets.get<Sound>("water-drop.ogg").play()
             configureEntity(entity) {
                 box.remove(entity)
                 fade.add(entity).apply { removeEntityOnEnd = true }
@@ -80,7 +84,6 @@ class CollisionSystem(
                     frameDuration = 0.1f
                 }
             }
-            assets.get<Sound>("water-drop.ogg").play()
         }
     }
 

@@ -13,9 +13,9 @@ import ktx.actors.onTouchDown
 import ktx.assets.async.AssetStorage
 
 class MenuScreen(
-    gameBoot: GameBoot,
+    private val gameBoot: GameBoot,
     private val assets: AssetStorage,
-) : BaseScreen(gameBoot) {
+) : BaseScreen() {
 
     init {
         hudStage.apply {

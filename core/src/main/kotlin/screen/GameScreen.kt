@@ -3,7 +3,6 @@ package screen
 import Action
 import Action.Type.START
 import BaseScreen
-import GameBoot
 import GameBoot.Companion.gameSizes
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Texture
@@ -13,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.renderers.OrthoCachedTiledMapRenderer
 import com.badlogic.gdx.scenes.scene2d.ui.Label
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
@@ -42,7 +42,7 @@ import ktx.tiled.totalWidth
 import ktx.tiled.type
 import ktx.tiled.x
 import ktx.tiled.y
-import listener.ScoreListener
+import listener.ScoreManager
 import system.AnimationSystem
 import system.CameraSystem
 import system.CollisionSystem
@@ -54,14 +54,14 @@ import system.RotateEffectSystem
 import kotlin.properties.Delegates
 
 class GameScreen(
-    gameBoot: GameBoot,
     private val assets: AssetStorage,
-) : BaseScreen(gameBoot) {
+) : BaseScreen() {
     private var world: World
     private var turtle: Entity by Delegates.notNull()
     private val tiledMap = assets.get<TiledMap>("map.tmx")
     private val mapRenderer = OrthoCachedTiledMapRenderer(tiledMap).apply { setBlending(true) }
-    private var score = Label("", Label.LabelStyle().apply { font = generateFont() })
+    private var score = ScoreManager()
+    private var scoreLabel = Label("", LabelStyle().apply { font = generateFont() })
     private lateinit var touchpad: Touchpad
 
     init {
@@ -74,6 +74,7 @@ class GameScreen(
             inject(mapRenderer)
             inject(gameSizes)
             inject(assets)
+            inject(score)
             system<InputSystem>()
             system<MovementSystem>()
             system<CameraSystem>()
@@ -82,7 +83,6 @@ class GameScreen(
             system<FadeEffectSystem>()
             system<RenderSystem>()
             system<CollisionSystem>()
-            familyListener<ScoreListener>()
         }
 
         buildHud()
@@ -102,7 +102,8 @@ class GameScreen(
     }
 
     override fun render(delta: Float) {
-        score.setText("Starfish Left: ${ScoreListener.total}")
+        if (score.total == 0) score.stop()
+        scoreLabel.setText(score.print())
         world.update(delta)
         hudStage.draw()
     }
@@ -122,7 +123,7 @@ class GameScreen(
         hudStage.addActor(Table().apply {
             setFillParent(true)
             pad(5f)
-            add(score).expandX().expandY().left().top()
+            add(scoreLabel).expandX().expandY().left().top()
             add(restartButton).top()
         })
     }
@@ -147,10 +148,9 @@ class GameScreen(
     }
 
     private fun restart() {
-        world.family(arrayOf(StarfishComponent::class))
-            .forEach { world.remove(it) }
+        world.family(arrayOf(StarfishComponent::class)).forEach { world.remove(it) }
 
-        ScoreListener.total = 0
+        score.reset()
 
         tiledMap.forEachMapObject("collision") { obj ->
             when (obj.type) {
@@ -224,6 +224,7 @@ class GameScreen(
     }
 
     private fun spawnStarfish(x: Float, y: Float) {
+        score.total++
         val texture = assets.get<Texture>("starfish.png")
         world.entity {
             add<TransformComponent> { position.set(x, y) }

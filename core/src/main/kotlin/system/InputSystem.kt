@@ -11,9 +11,11 @@ import component.AnimationComponent
 import component.InputComponent
 import component.TransformComponent
 import ktx.app.Platform
+import listener.ScoreManager
 import kotlin.properties.Delegates
 
 class InputSystem(
+    private val score: ScoreManager,
     private val input: ComponentMapper<InputComponent>,
     private val transform: ComponentMapper<TransformComponent>,
     private val animation: ComponentMapper<AnimationComponent>
@@ -34,6 +36,7 @@ class InputSystem(
                     }
                 }
                 animation[player].playMode = LOOP
+                score.start()
             } else {
                 animation[player].playMode = NORMAL
             }
@@ -49,6 +52,7 @@ class InputSystem(
                         }
                     }
                     animation[player].playMode = LOOP
+                    score.start()
                 } else {
                     animation[player].playMode = NORMAL
                 }
