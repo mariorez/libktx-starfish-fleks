@@ -19,19 +19,17 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.World
 import component.AnimationComponent
-import component.BoundingBoxComponent
 import component.InputComponent
 import component.PlayerComponent
 import component.RenderComponent
 import component.RockComponent
 import component.RotateEffectComponent
 import component.SignComponent
+import component.SolidComponent
 import component.StarfishComponent
 import component.TransformComponent
 import generateButton
 import generateFont
-import generatePolygon
-import generateRectangle
 import ktx.actors.onTouchDown
 import ktx.app.Platform
 import ktx.assets.async.AssetStorage
@@ -169,24 +167,15 @@ class GameScreen(
                 else -> {
                     val texture = assets.get<Texture>("${obj.type}.png")
                     world.entity {
+                        add<SolidComponent>()
                         add<TransformComponent> { position.set(obj.x, obj.y) }
                         add<RenderComponent> { sprite = Sprite(texture) }
                         when (obj.type) {
                             "rock" -> {
                                 add<RockComponent>()
-                                add<BoundingBoxComponent> {
-                                    polygon = generatePolygon(8, texture.width, texture.height).apply {
-                                        setPosition(obj.x, obj.y)
-                                    }
-                                }
                             }
                             "sign" -> {
                                 add<SignComponent>()
-                                add<BoundingBoxComponent> {
-                                    polygon = generateRectangle(texture.width, texture.height).apply {
-                                        setPosition(obj.x, obj.y)
-                                    }
-                                }
                             }
                         }
                     }
@@ -211,12 +200,6 @@ class GameScreen(
                 region = assets.get<TextureAtlas>("starfish-collector.atlas").findRegion("turtle")
                 frames = 6
                 frameDuration = 0.1f
-            }.apply {
-                add<BoundingBoxComponent> {
-                    val width = (region.regionWidth / frames)
-                    val height = region.regionHeight
-                    polygon = generatePolygon(8, width, height)
-                }
             }
         }
     }
@@ -225,15 +208,11 @@ class GameScreen(
         score.total++
         val texture = assets.get<Texture>("starfish.png")
         world.entity {
+            add<StarfishComponent>()
+            add<SolidComponent>()
             add<TransformComponent> { position.set(x, y) }
             add<RenderComponent> { sprite = Sprite(texture) }
-            add<StarfishComponent>()
             add<RotateEffectComponent> { speed = 1f }
-            add<BoundingBoxComponent> {
-                polygon = generatePolygon(8, texture.width, texture.height).apply {
-                    setPosition(x, y)
-                }
-            }
         }
     }
 

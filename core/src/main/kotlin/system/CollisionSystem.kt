@@ -9,27 +9,24 @@ import com.github.quillraven.fleks.AllOf
 import com.github.quillraven.fleks.ComponentMapper
 import com.github.quillraven.fleks.Entity
 import com.github.quillraven.fleks.IteratingSystem
-import com.github.quillraven.fleks.NoneOf
 import component.AnimationComponent
-import component.BoundingBoxComponent
 import component.FadeEffectComponent
-import component.PlayerComponent
 import component.RenderComponent
 import component.RockComponent
 import component.SignComponent
+import component.SolidComponent
 import component.StarfishComponent
 import component.TransformComponent
 import ktx.assets.async.AssetStorage
 import listener.ScoreManager
 import kotlin.properties.Delegates
 
-@AllOf([BoundingBoxComponent::class])
-@NoneOf([PlayerComponent::class])
+@AllOf([SolidComponent::class])
 class CollisionSystem(
     private val assets: AssetStorage,
     private val score: ScoreManager,
     private val transform: ComponentMapper<TransformComponent>,
-    private val box: ComponentMapper<BoundingBoxComponent>,
+    private val solid: ComponentMapper<SolidComponent>,
     private val render: ComponentMapper<RenderComponent>,
     private val fade: ComponentMapper<FadeEffectComponent>,
     private val rock: ComponentMapper<RockComponent>,
@@ -40,19 +37,11 @@ class CollisionSystem(
     var player: Entity by Delegates.notNull()
 
     override fun onTickEntity(entity: Entity) {
-        val playerSprite = render[player].sprite
-        val playerBox = box[player].polygon.apply {
-            setPosition(playerSprite.x, playerSprite.y)
-            setOrigin(playerSprite.originX, playerSprite.originY)
-            rotation = playerSprite.rotation
-            setScale(playerSprite.scaleX, playerSprite.scaleY)
-        }
-
-        val currentSprite = render[entity].sprite
-        val objectBox = box[entity].polygon
+        val playerBox = render[player].getPolygon(8)
+        val objectBox = if (rock.contains(entity) || starfish.contains(entity)) render[entity].getPolygon(8)
+        else render[entity].getPolygon()
 
         val mtv = MinimumTranslationVector()
-
         if (!overlaps(playerBox, objectBox, mtv)) return
 
         if (rock.contains(entity) || sign.contains(entity)) {
@@ -66,15 +55,15 @@ class CollisionSystem(
             score.total--
             assets.get<Sound>("water-drop.ogg").play()
             configureEntity(entity) {
-                box.remove(entity)
+                solid.remove(entity)
                 fade.add(entity).apply { removeEntityOnEnd = true }
             }
             world.entity {
                 add<RenderComponent>()
                 add<FadeEffectComponent> { removeEntityOnEnd = true }
                 add<TransformComponent> {
-                    position.x = currentSprite.x - 15
-                    position.y = currentSprite.y - 7
+                    position.x = objectBox.x - 15
+                    position.y = objectBox.y - 7
                 }
                 add<AnimationComponent> {
                     region = assets

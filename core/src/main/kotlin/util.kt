@@ -4,8 +4,6 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.NinePatch
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
-import com.badlogic.gdx.math.MathUtils
-import com.badlogic.gdx.math.Polygon
 import com.badlogic.gdx.scenes.scene2d.ui.Button
 import com.badlogic.gdx.scenes.scene2d.ui.Button.ButtonStyle
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton
@@ -21,26 +19,6 @@ data class GameSizes(
 ) {
     fun windowWidthF(): Float = windowWidth.toFloat()
     fun windowHeightF(): Float = windowHeight.toFloat()
-}
-
-fun generatePolygon(sides: Int, width: Int, height: Int): Polygon =
-    generatePolygon(sides, width.toFloat(), height.toFloat())
-
-fun generatePolygon(sides: Int, width: Float, height: Float): Polygon {
-    val vertices = FloatArray(2 * sides)
-    for (i in 0 until sides) {
-        val angle: Float = i * 6.28f / sides
-        // x-coordinate
-        vertices[2 * i] = width / 2 * MathUtils.cos(angle) + width / 2
-        // y-coordinate
-        vertices[2 * i + 1] = height / 2 * MathUtils.sin(angle) + height / 2
-    }
-    return Polygon(vertices)
-}
-
-fun generateRectangle(width: Int, height: Int): Polygon = generateRectangle(width.toFloat(), height.toFloat())
-fun generateRectangle(width: Float, height: Float): Polygon {
-    return Polygon(floatArrayOf(0f, 0f, width, 0f, width, height, 0f, height))
 }
 
 fun generateFont(fontFile: String = "open-sans.ttf"): BitmapFont {
