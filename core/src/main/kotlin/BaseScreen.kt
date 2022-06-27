@@ -4,7 +4,7 @@ import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.scenes.scene2d.Stage
-import com.badlogic.gdx.utils.viewport.FitViewport
+import com.badlogic.gdx.utils.viewport.ScreenViewport
 import ktx.app.KtxScreen
 import ktx.assets.disposeSafely
 
@@ -15,7 +15,7 @@ abstract class BaseScreen : KtxScreen {
     protected val camera = OrthographicCamera().apply {
         setToOrtho(false, gameSizes.windowWidthF(), gameSizes.windowHeightF())
     }
-    protected val hudStage = Stage(FitViewport(gameSizes.windowWidthF(), gameSizes.windowHeightF()))
+    protected val hudStage = Stage(ScreenViewport().apply { unitsPerPixel = gameSizes.unitsPerPixel() })
 
     fun registerAction(inputKey: Int, actionName: Action.Name) {
         actionMap[inputKey] = actionName

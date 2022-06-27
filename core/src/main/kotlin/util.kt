@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle
 import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
+import kotlin.math.max
 
 data class GameSizes(
     var windowWidth: Int,
@@ -19,6 +20,7 @@ data class GameSizes(
 ) {
     fun windowWidthF(): Float = windowWidth.toFloat()
     fun windowHeightF(): Float = windowHeight.toFloat()
+    fun unitsPerPixel(): Float = max(windowWidthF() / Gdx.graphics.width, windowHeightF() / Gdx.graphics.height)
 }
 
 fun generateFont(fontFile: String = "open-sans.ttf"): BitmapFont {
