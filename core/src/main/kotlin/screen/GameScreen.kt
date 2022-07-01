@@ -3,6 +3,7 @@ package screen
 import Action
 import Action.Type.START
 import BaseScreen
+import GameBoot.Companion.assets
 import GameBoot.Companion.gameSizes
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Texture
@@ -32,7 +33,6 @@ import component.TransformComponent
 import generateButton
 import ktx.actors.onTouchDown
 import ktx.app.Platform
-import ktx.assets.async.AssetStorage
 import ktx.assets.disposeSafely
 import ktx.tiled.forEachMapObject
 import ktx.tiled.totalHeight
@@ -51,9 +51,7 @@ import system.RenderSystem
 import system.RotateEffectSystem
 import kotlin.properties.Delegates
 
-class GameScreen(
-    private val assets: AssetStorage,
-) : BaseScreen() {
+class GameScreen : BaseScreen() {
     private val tiledMap = assets.get<TiledMap>("map.tmx")
     private val mapRenderer = OrthoCachedTiledMapRenderer(tiledMap).apply { setBlending(true) }
     private var score = ScoreManager()

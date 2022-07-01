@@ -3,6 +3,7 @@ package screen
 import Action
 import BaseScreen
 import GameBoot
+import GameBoot.Companion.assets
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.graphics.Color.GRAY
 import com.badlogic.gdx.graphics.Texture
@@ -10,11 +11,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Image
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import generateTextButton
 import ktx.actors.onTouchDown
-import ktx.assets.async.AssetStorage
 
 class MenuScreen(
-    private val gameBoot: GameBoot,
-    private val assets: AssetStorage,
+    private val gameBoot: GameBoot
 ) : BaseScreen() {
 
     init {
