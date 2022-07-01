@@ -3,9 +3,15 @@ import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.assets.loaders.SoundLoader
 import com.badlogic.gdx.audio.Sound
+import com.badlogic.gdx.graphics.Color
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.Texture.TextureFilter.Linear
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader
+import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader.FreeTypeFontLoaderParameter
 import com.badlogic.gdx.maps.tiled.TiledMap
 import com.badlogic.gdx.maps.tiled.TmxMapLoader
 import ktx.app.KtxGame
@@ -21,13 +27,12 @@ import screen.MenuScreen
 class GameBoot : KtxGame<KtxScreen>() {
 
     companion object {
+        val assets = AssetStorage()
         var gameSizes = GameSizes(
             windowWidth = 960,
             windowHeight = 540
         )
     }
-
-    private val assets = AssetStorage()
 
     override fun create() {
         Gdx.app.logLevel = LOG_DEBUG
@@ -54,10 +59,26 @@ class GameBoot : KtxGame<KtxScreen>() {
         assets.apply {
             setLoader<TiledMap> { TmxMapLoader(fileResolver) }
             setLoader<Sound> { SoundLoader(fileResolver) }
-            loadSync<TiledMap>("map.tmx")
+            setLoader<FreeTypeFontGenerator> { FreeTypeFontGeneratorLoader(fileResolver) }
+            setLoader<BitmapFont>(".ttf") { FreetypeFontLoader(fileResolver) }
+
+            loadSync<BitmapFont>("open-sans.ttf", FreeTypeFontLoaderParameter().apply {
+                fontFileName = "open-sans.ttf"
+                fontParameters.apply {
+                    size = 32
+                    color = Color.WHITE
+                    borderColor = Color.BLACK
+                    borderWidth = 2f
+                    borderStraight = true
+                    minFilter = Texture.TextureFilter.Linear
+                    magFilter = Texture.TextureFilter.Linear
+                }
+            })
             loadSync<TextureAtlas>("starfish-collector.atlas").apply {
                 textures.forEach { it.setFilter(Linear, Linear) }
             }
+            loadSync<TiledMap>("map.tmx")
+            loadSync<Sound>("water-drop.ogg")
             loadSync<Texture>("water.jpg").setFilter(Linear, Linear)
             loadSync<Texture>("button.png").setFilter(Linear, Linear)
             loadSync<Texture>("game-title.png").setFilter(Linear, Linear)
@@ -65,7 +86,7 @@ class GameBoot : KtxGame<KtxScreen>() {
             loadSync<Texture>("rock.png").setFilter(Linear, Linear)
             loadSync<Texture>("sign.png").setFilter(Linear, Linear)
             loadSync<Texture>("undo.png").setFilter(Linear, Linear)
-            loadSync<Sound>("water-drop.ogg")
+
             if (Platform.isMobile) {
                 loadSync<Texture>("touchpad-bg.png").setFilter(Linear, Linear)
                 loadSync<Texture>("touchpad-knob.png").setFilter(Linear, Linear)

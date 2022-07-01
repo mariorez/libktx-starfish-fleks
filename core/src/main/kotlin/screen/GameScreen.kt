@@ -6,6 +6,7 @@ import BaseScreen
 import GameBoot.Companion.gameSizes
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.graphics.g2d.BitmapFont
 import com.badlogic.gdx.graphics.g2d.Sprite
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.graphics.g2d.TextureRegion
@@ -29,7 +30,6 @@ import component.SolidComponent
 import component.StarfishComponent
 import component.TransformComponent
 import generateButton
-import generateFont
 import ktx.actors.onTouchDown
 import ktx.app.Platform
 import ktx.assets.async.AssetStorage
@@ -57,7 +57,7 @@ class GameScreen(
     private val tiledMap = assets.get<TiledMap>("map.tmx")
     private val mapRenderer = OrthoCachedTiledMapRenderer(tiledMap).apply { setBlending(true) }
     private var score = ScoreManager()
-    private var scoreLabel = Label("", LabelStyle().apply { font = generateFont() })
+    private var scoreLabel = Label("", LabelStyle().apply { font = assets.get<BitmapFont>("open-sans.ttf") })
     private lateinit var touchpad: Touchpad
     private var turtle: Entity by Delegates.notNull()
     private var world = World {
