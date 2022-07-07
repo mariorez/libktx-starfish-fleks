@@ -20,13 +20,13 @@ data class RenderComponent(
         }
         polygon = Polygon().apply {
             vertices = floatArrayOf(
-                sprite.x, sprite.y,
-                sprite.x + sprite.width, sprite.y,
-                sprite.x + sprite.width, sprite.y + sprite.height,
-                sprite.x, sprite.y + sprite.height
+                0f, 0f,
+                sprite.width, 0f,
+                sprite.width, sprite.height,
+                0f, sprite.height
             )
         }
-        return polygon as Polygon
+        return getPolygon()
     }
 
     fun getPolygon(sides: Int): Polygon {
