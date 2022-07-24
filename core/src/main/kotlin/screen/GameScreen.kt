@@ -4,7 +4,7 @@ import Action
 import Action.Type.START
 import BaseScreen
 import GameBoot.Companion.assets
-import GameBoot.Companion.gameSizes
+import GameBoot.Companion.sizes
 import com.badlogic.gdx.Input
 import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.graphics.g2d.BitmapFont
@@ -19,7 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.ui.Touchpad
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable
 import com.github.quillraven.fleks.Entity
-import com.github.quillraven.fleks.World
+import com.github.quillraven.fleks.world
 import component.AnimationComponent
 import component.InputComponent
 import component.PlayerComponent
@@ -58,26 +58,28 @@ class GameScreen : BaseScreen() {
     private var scoreLabel = Label("", LabelStyle().apply { font = assets.get<BitmapFont>("open-sans.ttf") })
     private lateinit var touchpad: Touchpad
     private var turtle: Entity by Delegates.notNull()
-    private var world = World {
-        inject(batch)
-        inject(camera)
-        inject(mapRenderer)
-        inject(gameSizes)
-        inject(assets)
-        inject(score)
-        system<InputSystem>()
-        system<MovementSystem>()
-        system<CameraSystem>()
-        system<AnimationSystem>()
-        system<RotateEffectSystem>()
-        system<FadeEffectSystem>()
-        system<RenderSystem>()
-        system<CollisionSystem>()
+    private var world = world {
+        injectables {
+            add(batch)
+            add(camera)
+            add(mapRenderer)
+            add(score)
+        }
+        systems {
+            add<InputSystem>()
+            add<MovementSystem>()
+            add<CameraSystem>()
+            add<AnimationSystem>()
+            add<RotateEffectSystem>()
+            add<FadeEffectSystem>()
+            add<RenderSystem>()
+            add<CollisionSystem>()
+        }
     }
 
     init {
-        gameSizes.worldWidth = tiledMap.totalWidth()
-        gameSizes.worldHeight = tiledMap.totalHeight()
+        sizes.worldWidth = tiledMap.totalWidth()
+        sizes.worldHeight = tiledMap.totalHeight()
 
         buildHud()
         buildControls()

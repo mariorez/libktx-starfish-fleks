@@ -1,6 +1,6 @@
 package system
 
-import GameSizes
+import GameBoot.Companion.sizes
 import com.badlogic.gdx.graphics.OrthographicCamera
 import com.badlogic.gdx.math.MathUtils.clamp
 import com.github.quillraven.fleks.ComponentMapper
@@ -11,7 +11,6 @@ import kotlin.properties.Delegates
 
 class CameraSystem(
     private val camera: OrthographicCamera,
-    private val gameSizes: GameSizes,
     private val transform: ComponentMapper<TransformComponent>,
 ) : IntervalSystem() {
 
@@ -21,8 +20,8 @@ class CameraSystem(
 
     override fun onTick() {
         transform[player].position.apply {
-            camera.position.x = clamp(x, middleWidth, gameSizes.worldWidth - middleWidth)
-            camera.position.y = clamp(y, middleHeight, gameSizes.worldHeight - middleHeight)
+            camera.position.x = clamp(x, middleWidth, sizes.worldWidth - middleWidth)
+            camera.position.y = clamp(y, middleHeight, sizes.worldHeight - middleHeight)
             camera.update()
         }
     }

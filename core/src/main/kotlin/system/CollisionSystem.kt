@@ -1,5 +1,6 @@
 package system
 
+import GameBoot.Companion.assets
 import com.badlogic.gdx.audio.Sound
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.math.Intersector
@@ -17,13 +18,11 @@ import component.SignComponent
 import component.SolidComponent
 import component.StarfishComponent
 import component.TransformComponent
-import ktx.assets.async.AssetStorage
 import listener.ScoreManager
 import kotlin.properties.Delegates
 
 @AllOf([SolidComponent::class])
 class CollisionSystem(
-    private val assets: AssetStorage,
     private val score: ScoreManager,
     private val transform: ComponentMapper<TransformComponent>,
     private val solid: ComponentMapper<SolidComponent>,

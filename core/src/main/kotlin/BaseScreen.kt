@@ -1,4 +1,4 @@
-import GameBoot.Companion.gameSizes
+import GameBoot.Companion.sizes
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.InputMultiplexer
 import com.badlogic.gdx.graphics.OrthographicCamera
@@ -15,11 +15,11 @@ abstract class BaseScreen : KtxScreen {
     private val actionMap = mutableMapOf<Int, Action.Name>()
     protected val batch = SpriteBatch()
     protected val camera = OrthographicCamera().apply {
-        setToOrtho(false, gameSizes.windowWidthF(), gameSizes.windowHeightF())
+        setToOrtho(false, sizes.windowWidthF(), sizes.windowHeightF())
     }
     protected val hudStage =
-        if (Platform.isMobile) Stage(ScreenViewport().apply { unitsPerPixel = gameSizes.unitsPerPixel() })
-        else Stage(FitViewport(gameSizes.windowWidthF(), gameSizes.windowHeightF()), batch)
+        if (Platform.isMobile) Stage(ScreenViewport().apply { unitsPerPixel = sizes.unitsPerPixel() })
+        else Stage(FitViewport(sizes.windowWidthF(), sizes.windowHeightF()), batch)
 
     fun registerAction(inputKey: Int, actionName: Action.Name) {
         actionMap[inputKey] = actionName
